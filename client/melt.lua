@@ -46,12 +46,12 @@ Citizen.CreateThread(function()
                 if not Config.IsMelting then
                     if Config.CanTake then
                         DrawText3D(Config.MeltLocation.x, Config.MeltLocation.y, Config.MeltLocation.z, "~g~E~w~ - Grab gold bars")
-                        if IsControlJustReleased(0, Keys["E"]) then
+                        if IsControlJustReleased(0, 38) then
                             TriggerServerEvent("qb-pawnshop:server:getGoldBars")
                         end
                     else
                         DrawText3D(Config.MeltLocation.x, Config.MeltLocation.y, Config.MeltLocation.z, "~g~E~w~ - Melt Gold Items")
-                        if IsControlJustReleased(0, Keys["E"]) then 
+                        if IsControlJustReleased(0, 38) then 
                             local waitTime = math.random(10000, 15000)
                             ScrapAnim(1000)
                             QBCore.Functions.Progressbar("drop_golden_stuff", "Grab Items", 1000, false, true, {
@@ -93,7 +93,7 @@ Citizen.CreateThread(function()
 						sellItemsSet = true
                     elseif sellItemsSet and hasGold then
                         DrawText3D(Config.SellGold.x, Config.SellGold.y, Config.SellGold.z, "~g~E~w~ - Sell Gold Bars")
-                        if IsControlJustReleased(0, Keys["E"]) then
+                        if IsControlJustReleased(0, 38) then
                             local lockpickTime = 20000
                             ScrapAnim(lockpickTime)
                             QBCore.Functions.Progressbar("sell_gold", "Selling Gold", lockpickTime, false, true, {

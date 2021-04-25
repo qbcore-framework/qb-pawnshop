@@ -37,9 +37,7 @@ AddEventHandler("qb-pawnshop:server:sellPawnItems", function()
                 end
             end
         end
-        --Player.Functions.AddMoney("cash", price, "sold pawnable items")
-        Player.Functions.AddItem("cash", price, false) 
-		TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['cash'], "add")
+        Player.Functions.AddMoney("cash", price, "sold pawnable items")
         TriggerClientEvent('QBCore:Notify', src, "You have sold your items")
     end
 end)
@@ -59,9 +57,7 @@ AddEventHandler("qb-pawnshop:server:sellHardwarePawnItems", function()
                 end
             end
         end
-        --Player.Functions.AddMoney("cash", price, "sold pawnable items")
-        Player.Functions.AddItem("cash", price, false) 
-		TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['cash'], "add")
+        Player.Functions.AddMoney("cash", price, "sold pawnable items")
         TriggerClientEvent('QBCore:Notify', src, "You have sold your items")
     end
 
@@ -100,9 +96,7 @@ AddEventHandler("qb-pawnshop:server:sellGold", function()
                 end
             end
         end
-        --Player.Functions.AddMoney("cash", price, "sold-gold")
-        Player.Functions.AddItem("cash", price, false) 
-		TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['cash'], "add")
+        Player.Functions.AddMoney("cash", price, "sold-gold")
         TriggerClientEvent('QBCore:Notify', src, "You have sold your items")
     end
 end)

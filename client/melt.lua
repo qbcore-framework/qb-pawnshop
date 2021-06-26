@@ -40,9 +40,9 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - vector3(Config.MeltLocation.x, Config.MeltLocation.y, Config.MeltLocation.z)) < 3.0 then
+		if #(pos - Config.MeltLocation) < 3.0 then
 			inRange = true
-			if #(pos - vector3(Config.MeltLocation.x, Config.MeltLocation.y, Config.MeltLocation.z)) < 1.5 then
+			if #(pos - Config.MeltLocation) < 1.5 then
                 if not Config.IsMelting then
                     if Config.CanTake then
                         DrawText3D(Config.MeltLocation.x, Config.MeltLocation.y, Config.MeltLocation.z, "~g~E~w~ - Grab gold bars")
@@ -84,9 +84,9 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - vector3(Config.SellGold.x, Config.SellGold.y, Config.SellGold.z)) < 3.0 then
+		if #(pos - Config.SellGold) < 3.0 then
 			inRange = true
-            if #(pos - vector3(Config.SellGold.x, Config.SellGold.y, Config.SellGold.z)) < 1.5 then
+            if #(pos - Config.SellGold) < 1.5 then
                 if GetClockHours() >= 9 and GetClockHours() <= 18 then
                     if not sellItemsSet then 
 						hasGold = HasPlayerGold()

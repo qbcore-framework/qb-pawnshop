@@ -25,9 +25,9 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - vector3(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)) < 5.0 then
+		if #(pos - Config.PawnLocation) < 5.0 then
 			inRange = true
-			if #(pos - vector3(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)) < 1.5 then
+			if #(pos - Config.PawnLocation) < 1.5 then
 				if GetClockHours() >= 7 and GetClockHours() <= 17 then
 					if not sellItemsSet then 
 						sellPrice = GetSellingPrice()
@@ -67,9 +67,9 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - vector3(Config.PawnHardwareLocation.x, Config.PawnHardwareLocation.y, Config.PawnHardwareLocation.z)) < 5.0 then
+		if #(pos - Config.PawnHardwareLocation) < 5.0 then
 			inRange = true
-			if #(pos - vector3(Config.PawnHardwareLocation.x, Config.PawnHardwareLocation.y, Config.PawnHardwareLocation.z)) < 1.5 then
+			if #(pos - Config.PawnHardwareLocation) < 1.5 then
 				if GetClockHours() >= 9 and GetClockHours() <= 16 then
 					if not sellHardwareItemsSet then 
 						sellHardwarePrice = GetSellingHardwarePrice()

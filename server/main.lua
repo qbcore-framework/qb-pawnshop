@@ -183,7 +183,7 @@ QBCore.Functions.CreateCallback('qb-pawnshop:server:hasGold', function(source, c
 	local retval = false
     local Player = QBCore.Functions.GetPlayer(source)
     local gold = Player.Functions.GetItemByName('goldbar')
-    if gold ~= nil and gold.amount > 0 then
+    if gold > 0 and gold.amount > 0 then
         retval = true
     end
     cb(retval)

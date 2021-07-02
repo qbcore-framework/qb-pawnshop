@@ -1,6 +1,3 @@
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
 local ItemList = {
     ["goldchain"] = math.random(60, 110),
     ["diamond_ring"] = math.random(85, 135),

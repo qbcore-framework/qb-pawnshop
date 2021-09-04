@@ -30,7 +30,7 @@ AddEventHandler("qb-pawnshop:server:sellPawnItems", function()
                 if ItemList[Player.PlayerData.items[k].name] ~= nil then 
                     price = price + (ItemList[Player.PlayerData.items[k].name] * Player.PlayerData.items[k].amount)
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
-                    TriggerClientEvent('inventory:client:ItemBox', source, Player.PlayerData.items[k].name, "remove")
+                    TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[Player.PlayerData.items[k].name], "remove")
                 end
             end
         end
@@ -50,7 +50,7 @@ AddEventHandler("qb-pawnshop:server:sellHardwarePawnItems", function()
                 if ItemListHardware[Player.PlayerData.items[k].name] ~= nil then 
                     price = price + (ItemListHardware[Player.PlayerData.items[k].name] * Player.PlayerData.items[k].amount)
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
-                    TriggerClientEvent('inventory:client:ItemBox', src, Player.PlayerData.items[k].name, "remove")
+                    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Player.PlayerData.items[k].name], "remove")
                 end
             end
         end
@@ -89,7 +89,7 @@ AddEventHandler("qb-pawnshop:server:sellGold", function()
                 if Player.PlayerData.items[k].name == "goldbar" then 
                     price = price + (math.random(3000, 4200) * Player.PlayerData.items[k].amount)
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
-                    TriggerClientEvent('inventory:client:ItemBox', source, Player.PlayerData.items[k].name, "remove")
+                    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Player.PlayerData.items[k].name], "remove")
                 end
             end
         end

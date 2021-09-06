@@ -2,12 +2,13 @@ local openingDoor = false
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded")
 AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
+	LocalPlayer.state:set("inv_busy", true, true)		
     QBCore.Functions.TriggerCallback('qb-pawnshop:melting:server:GetConfig', function(IsMelting, MeltTime, CanTake)
         Config.IsMelting = IsMelting
         Config.MeltTime = MeltTime
         Config.CanTake = CanTake
         isLoggedIn = true
-
+LocalPlayer.state:set("inv_busy", false, true)
         if Config.IsMelting then
             Citizen.CreateThread(function()
                 while Config.IsMelting do
@@ -16,6 +17,7 @@ AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
                         if Config.MeltTime <= 0 then
                             Config.CanTake = true
                             Config.IsMelting = false
+			LocalPlayer.state:set("inv_busy", false, true)
                         end
                     else
                         break
@@ -54,14 +56,17 @@ Citizen.CreateThread(function()
                         if IsControlJustReleased(0, 38) then 
                             local waitTime = math.random(10000, 15000)
                             ScrapAnim(1000)
+				LocalPlayer.state:set("inv_busy", true, true)				
                             QBCore.Functions.Progressbar("drop_golden_stuff", "Grab Items", 1000, false, true, {
                                 disableMovement = true,
                                 disableCarMovement = true,
                                 disableMouse = false,
                                 disableCombat = true,
+				LocalPlayer.state:set("inv_busy", false, true)						
                             }, {}, {}, {}, function() -- Done
                                 if not Config.IsMelting then
                                     StopAnimTask(PlayerPedId(), "mp_car_bomb", "car_bomb_mechanic", 1.0)
+					LocalPlayer.state:set("inv_busy", false, true)						
                                     TriggerServerEvent("qb-pawnshop:server:meltItems")
                                 end
                             end)
@@ -96,6 +101,7 @@ Citizen.CreateThread(function()
                         if IsControlJustReleased(0, 38) then
                             local lockpickTime = 20000
                             ScrapAnim(lockpickTime)
+				LocalPlayer.state:set("inv_busy", true, true)				
                             QBCore.Functions.Progressbar("sell_gold", "Selling Gold", lockpickTime, false, true, {
                                 disableMovement = true,
                                 disableCarMovement = true,
@@ -108,10 +114,12 @@ Citizen.CreateThread(function()
                             }, {}, {}, function() -- Done
                                 openingDoor = false
                                 ClearPedTasks(PlayerPedId())
+				LocalPlayer.state:set("inv_busy", false, true)					
                                 TriggerServerEvent('qb-pawnshop:server:sellGold')
                             end, function() -- Cancel
                                 openingDoor = false
                                 ClearPedTasks(PlayerPedId())
+				LocalPlayer.state:set("inv_busy", false, true)					
                                 QBCore.Functions.Notify("Process Canceled", "error")
                             end)
                         end

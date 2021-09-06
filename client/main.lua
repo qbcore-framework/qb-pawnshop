@@ -29,13 +29,16 @@ Citizen.CreateThread(function()
 						DrawText3D(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z, "~g~E~w~ - Sell Watches/ Necklaces / Rings ($"..sellPrice..")")
 						if IsControlJustReleased(0, 38) then
 							TaskStartScenarioInPlace(PlayerPedId(), "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
+								LocalPlayer.state:set("inv_busy", true, true)
                             QBCore.Functions.Progressbar("sell_pawn_items", "Selling Items", math.random(15000, 25000), false, true, {}, {}, {}, {}, function() -- Done
                                 ClearPedTasks(PlayerPedId())
 								TriggerServerEvent("qb-pawnshop:server:sellPawnItems")
 								sellItemsSet = false
 								sellPrice = 0
+								LocalPlayer.state:set("inv_busy", false, true)		
                             end, function() -- Cancel
 								ClearPedTasks(PlayerPedId())
+								LocalPlayer.state:set("inv_busy", false, true)		
 								QBCore.Functions.Notify("Canceled..", "error")
 							end)
 						end
@@ -71,13 +74,16 @@ Citizen.CreateThread(function()
 						DrawText3D(Config.PawnHardwareLocation.x, Config.PawnHardwareLocation.y, Config.PawnHardwareLocation.z, "~g~E~w~ - Sale iPhones/Samsung S10s/Tablets/Laptops ($"..sellHardwarePrice..")")
 						if IsControlJustReleased(0, 38) then
 							TaskStartScenarioInPlace(PlayerPedId(), "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
+								LocalPlayer.state:set("inv_busy", true, true)
                             QBCore.Functions.Progressbar("sell_pawn_items", "Sell things", math.random(15000, 25000), false, true, {}, {}, {}, {}, function() -- Done
                                 ClearPedTasks(PlayerPedId())
 								TriggerServerEvent("qb-pawnshop:server:sellHardwarePawnItems")
 								sellHardwareItemsSet = false
 								sellHardwarePrice = 0
+								LocalPlayer.state:set("inv_busy", false, true)
                             end, function() -- Cancel
 								ClearPedTasks(PlayerPedId())
+								LocalPlayer.state:set("inv_busy", false, true)		
 								QBCore.Functions.Notify("Canceled", "error")
 							end)
 						end

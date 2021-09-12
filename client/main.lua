@@ -1,5 +1,4 @@
-isLoggedIn = false
-
+local isLoggedIn = false
 local sellItemsSet = false
 local sellPrice = 0
 local sellHardwareItemsSet = false

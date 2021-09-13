@@ -3,6 +3,7 @@ local sellItemsSet = false
 local sellPrice = 0
 local sellHardwareItemsSet = false
 local sellHardwarePrice = 0
+
 Citizen.CreateThread(function()
 	local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
 	SetBlipSprite(blip, 431)

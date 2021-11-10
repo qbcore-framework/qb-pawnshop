@@ -1,4 +1,4 @@
-local isLoggedIn = false
+QBCore = exports['qb-core']:GetCoreObject()
 local sellItemsSet = false
 local sellPrice = 0
 local sellHardwareItemsSet = false
@@ -14,7 +14,7 @@ Citizen.CreateThread(function()
 	BeginTextCommandSetBlipName("STRING")
 	AddTextComponentSubstringPlayerName("F.T. Pawn")
 	EndTextCommandSetBlipName(blip)
-	while true do 
+	while true do
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
@@ -22,7 +22,7 @@ Citizen.CreateThread(function()
 			inRange = true
 			if #(pos - Config.PawnLocation) < 1.5 then
 				if GetClockHours() >= 7 and GetClockHours() <= 17 then
-					if not sellItemsSet then 
+					if not sellItemsSet then
 						sellPrice = GetSellingPrice()
 						sellItemsSet = true
 					elseif sellItemsSet and sellPrice ~= 0 then
@@ -56,7 +56,7 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-	while true do 
+	while true do
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
@@ -64,7 +64,7 @@ Citizen.CreateThread(function()
 			inRange = true
 			if #(pos - Config.PawnHardwareLocation) < 1.5 then
 				if GetClockHours() >= 9 and GetClockHours() <= 16 then
-					if not sellHardwareItemsSet then 
+					if not sellHardwareItemsSet then
 						sellHardwarePrice = GetSellingHardwarePrice()
 						sellHardwareItemsSet = true
 					elseif sellHardwareItemsSet and sellHardwarePrice ~= 0 then

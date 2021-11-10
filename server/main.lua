@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local ItemList = {
     ["goldchain"] = math.random(60, 110),
     ["diamond_ring"] = math.random(85, 135),
@@ -24,10 +26,10 @@ AddEventHandler("qb-pawnshop:server:sellPawnItems", function()
     local src = source
     local price = 0
     local Player = QBCore.Functions.GetPlayer(src)
-    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then 
-        for k, v in pairs(Player.PlayerData.items) do 
-            if Player.PlayerData.items[k] ~= nil then 
-                if ItemList[Player.PlayerData.items[k].name] ~= nil then 
+    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then
+        for k, v in pairs(Player.PlayerData.items) do
+            if Player.PlayerData.items[k] ~= nil then
+                if ItemList[Player.PlayerData.items[k].name] ~= nil then
                     price = price + (ItemList[Player.PlayerData.items[k].name] * Player.PlayerData.items[k].amount)
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
                     TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[Player.PlayerData.items[k].name], "remove")
@@ -44,10 +46,10 @@ AddEventHandler("qb-pawnshop:server:sellHardwarePawnItems", function()
     local src = source
     local price = 0
     local Player = QBCore.Functions.GetPlayer(src)
-    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then 
-        for k, v in pairs(Player.PlayerData.items) do 
-            if Player.PlayerData.items[k] ~= nil then 
-                if ItemListHardware[Player.PlayerData.items[k].name] ~= nil then 
+    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then
+        for k, v in pairs(Player.PlayerData.items) do
+            if Player.PlayerData.items[k] ~= nil then
+                if ItemListHardware[Player.PlayerData.items[k].name] ~= nil then
                     price = price + (ItemListHardware[Player.PlayerData.items[k].name] * Player.PlayerData.items[k].amount)
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
                     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Player.PlayerData.items[k].name], "remove")
@@ -83,10 +85,10 @@ AddEventHandler("qb-pawnshop:server:sellGold", function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local price = 0
-    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then 
-        for k, v in pairs(Player.PlayerData.items) do 
-            if Player.PlayerData.items[k] ~= nil then 
-                if Player.PlayerData.items[k].name == "goldbar" then 
+    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then
+        for k, v in pairs(Player.PlayerData.items) do
+            if Player.PlayerData.items[k] ~= nil then
+                if Player.PlayerData.items[k].name == "goldbar" then
                     price = price + (math.random(3000, 4200) * Player.PlayerData.items[k].amount)
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
                     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Player.PlayerData.items[k].name], "remove")
@@ -103,10 +105,10 @@ AddEventHandler("qb-pawnshop:server:meltItems", function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local goldbars = 0
-    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then 
-        for k, v in pairs(Player.PlayerData.items) do 
-            if Player.PlayerData.items[k] ~= nil then 
-                if MeltItems[Player.PlayerData.items[k].name] ~= nil then 
+    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then
+        for k, v in pairs(Player.PlayerData.items) do
+            if Player.PlayerData.items[k] ~= nil then
+                if MeltItems[Player.PlayerData.items[k].name] ~= nil then
                     local amount = (Player.PlayerData.items[k].amount / MeltItems[Player.PlayerData.items[k].name])
                     if amount < 1 then
                         TriggerClientEvent('QBCore:Notify', src, "You do not have enough " .. Player.PlayerData.items[k].label, "error")
@@ -145,10 +147,10 @@ end)
 QBCore.Functions.CreateCallback('qb-pawnshop:server:getSellPrice', function(source, cb)
     local retval = 0
     local Player = QBCore.Functions.GetPlayer(source)
-    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then 
-        for k, v in pairs(Player.PlayerData.items) do 
-            if Player.PlayerData.items[k] ~= nil then 
-                if ItemList[Player.PlayerData.items[k].name] ~= nil then 
+    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then
+        for k, v in pairs(Player.PlayerData.items) do
+            if Player.PlayerData.items[k] ~= nil then
+                if ItemList[Player.PlayerData.items[k].name] ~= nil then
                     retval = retval + (ItemList[Player.PlayerData.items[k].name] * Player.PlayerData.items[k].amount)
                 end
             end
@@ -164,10 +166,10 @@ end)
 QBCore.Functions.CreateCallback('qb-pawnshop:server:getSellHardwarePrice', function(source, cb)
     local retval = 0
     local Player = QBCore.Functions.GetPlayer(source)
-    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then 
-        for k, v in pairs(Player.PlayerData.items) do 
-            if Player.PlayerData.items[k] ~= nil then 
-                if ItemListHardware[Player.PlayerData.items[k].name] ~= nil then 
+    if Player.PlayerData.items ~= nil and next(Player.PlayerData.items) ~= nil then
+        for k, v in pairs(Player.PlayerData.items) do
+            if Player.PlayerData.items[k] ~= nil then
+                if ItemListHardware[Player.PlayerData.items[k].name] ~= nil then
                     retval = retval + (ItemListHardware[Player.PlayerData.items[k].name] * Player.PlayerData.items[k].amount)
                 end
             end

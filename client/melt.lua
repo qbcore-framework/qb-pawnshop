@@ -6,12 +6,11 @@ AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
         Config.IsMelting = IsMelting
         Config.MeltTime = MeltTime
         Config.CanTake = CanTake
-        isLoggedIn = true
 
         if Config.IsMelting then
             Citizen.CreateThread(function()
                 while Config.IsMelting do
-                    if isLoggedIn then
+                    if LocalPlayer.state.isLoggedIn then
                         Config.MeltTime = Config.MeltTime - 1
                         if Config.MeltTime <= 0 then
                             Config.CanTake = true
@@ -32,11 +31,10 @@ AddEventHandler("QBCore:Client:OnPlayerUnload", function()
     Config.IsMelting = false
     Config.MeltTime = 300
     Config.CanTake = false
-    isLoggedIn = false
 end)
 
 Citizen.CreateThread(function()
-	while true do 
+	while true do
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
@@ -51,7 +49,7 @@ Citizen.CreateThread(function()
                         end
                     else
                         DrawText3D(Config.MeltLocation.x, Config.MeltLocation.y, Config.MeltLocation.z, "~g~E~w~ - Melt Gold Items")
-                        if IsControlJustReleased(0, 38) then 
+                        if IsControlJustReleased(0, 38) then
                             local waitTime = math.random(10000, 15000)
                             ScrapAnim(1000)
                             QBCore.Functions.Progressbar("drop_golden_stuff", "Grab Items", 1000, false, true, {
@@ -80,7 +78,7 @@ end)
 local sellItemsSet = false
 local hasGold = false
 Citizen.CreateThread(function()
-	while true do 
+	while true do
 		Citizen.Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
@@ -88,7 +86,7 @@ Citizen.CreateThread(function()
 			inRange = true
             if #(pos - Config.SellGold) < 1.5 then
                 if GetClockHours() >= 9 and GetClockHours() <= 18 then
-                    if not sellItemsSet then 
+                    if not sellItemsSet then
 						hasGold = HasPlayerGold()
 						sellItemsSet = true
                     elseif sellItemsSet and hasGold then
@@ -118,7 +116,7 @@ Citizen.CreateThread(function()
                     else
                         DrawText3D(Config.SellGold.x, Config.SellGold.y, Config.SellGold.z, "You have no gold on you")
                     end
-                    
+
                 else
                     DrawText3D(Config.SellGold.x, Config.SellGold.y, Config.SellGold.z, "Pawnshop Closed")
                 end
@@ -172,7 +170,7 @@ AddEventHandler('qb-pawnshop:client:startMelting', function()
         Config.MeltTime = 300
         Citizen.CreateThread(function()
             while Config.IsMelting do
-                if isLoggedIn then
+                if LocalPlayer.state.isLoggedIn then
                     Config.MeltTime = Config.MeltTime - 1
                     if Config.MeltTime <= 0 then
                         Config.CanTake = true
@@ -199,12 +197,11 @@ AddEventHandler('qb-pawnshop:client:SetTakeState', function(state)
         Config.IsMelting = IsMelting
         Config.MeltTime = MeltTime
         Config.CanTake = CanTake
-        isLoggedIn = true
 
         if Config.IsMelting then
             Citizen.CreateThread(function()
                 while Config.IsMelting do
-                    if isLoggedIn then
+                    if LocalPlayer.state.isLoggedIn then
                         Config.MeltTime = Config.MeltTime - 1
                         if Config.MeltTime <= 0 then
                             Config.CanTake = true

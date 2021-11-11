@@ -1,10 +1,49 @@
+-- Variables
+
 QBCore = exports['qb-core']:GetCoreObject()
 local sellItemsSet = false
 local sellPrice = 0
 local sellHardwareItemsSet = false
 local sellHardwarePrice = 0
 
-Citizen.CreateThread(function()
+-- Functions
+
+function GetSellingPrice()
+	local price = 0
+	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getSellPrice', function(result)
+		price = result
+	end)
+	Wait(500)
+	return price
+end
+
+function GetSellingHardwarePrice()
+	local price = 0
+	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getSellHardwarePrice', function(result)
+		price = result
+	end)
+	Wait(500)
+	return price
+end
+
+function DrawText3D(x, y, z, text)
+	SetTextScale(0.35, 0.35)
+    SetTextFont(4)
+    SetTextProportional(1)
+    SetTextColour(255, 255, 255, 215)
+    SetTextEntry("STRING")
+    SetTextCentre(true)
+    AddTextComponentString(text)
+    SetDrawOrigin(x,y,z, 0)
+    DrawText(0.0, 0.0)
+    local factor = (string.len(text)) / 370
+    DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
+    ClearDrawOrigin()
+end
+
+-- Thread
+
+CreateThread(function()
 	local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
 	SetBlipSprite(blip, 431)
 	SetBlipDisplay(blip, 4)
@@ -12,10 +51,10 @@ Citizen.CreateThread(function()
 	SetBlipAsShortRange(blip, true)
 	SetBlipColour(blip, 5)
 	BeginTextCommandSetBlipName("STRING")
-	AddTextComponentSubstringPlayerName("F.T. Pawn")
+	AddTextComponentSubstringPlayerName("Pawn Shop")
 	EndTextCommandSetBlipName(blip)
 	while true do
-		Citizen.Wait(1)
+		Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
 		if #(pos - Config.PawnLocation) < 5.0 then
@@ -50,14 +89,14 @@ Citizen.CreateThread(function()
 		if not inRange then
 			sellPrice = 0
 			sellItemsSet = false
-			Citizen.Wait(2500)
+			Wait(2500)
 		end
 	end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
-		Citizen.Wait(1)
+		Wait(1)
 		local inRange = false
 		local pos = GetEntityCoords(PlayerPedId())
 		if #(pos - Config.PawnHardwareLocation) < 5.0 then
@@ -92,40 +131,7 @@ Citizen.CreateThread(function()
 		if not inRange then
 			sellHardwarePrice = 0
 			sellHardwareItemsSet = false
-			Citizen.Wait(2500)
+			Wait(2500)
 		end
 	end
 end)
-
-function GetSellingPrice()
-	local price = 0
-	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getSellPrice', function(result)
-		price = result
-	end)
-	Citizen.Wait(500)
-	return price
-end
-
-function GetSellingHardwarePrice()
-	local price = 0
-	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getSellHardwarePrice', function(result)
-		price = result
-	end)
-	Citizen.Wait(500)
-	return price
-end
-
-function DrawText3D(x, y, z, text)
-	SetTextScale(0.35, 0.35)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    SetTextCentre(true)
-    AddTextComponentString(text)
-    SetDrawOrigin(x,y,z, 0)
-    DrawText(0.0, 0.0)
-    local factor = (string.len(text)) / 370
-    DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
-    ClearDrawOrigin()
-end

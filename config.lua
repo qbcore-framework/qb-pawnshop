@@ -1,10 +1,45 @@
 Config = {}
 
-
 Config.PawnLocation = vector3(412.34, 314.81, 103.13)
-Config.PawnHardwareLocation = vector3(-658.07, -857.52, 24.49)
-Config.MeltLocation = vector3(1087.92, -2001.95, 30.88)
-Config.SellGold = vector3(-1459.3, -413.6, 35.74)
-Config.IsMelting = false
-Config.MeltTime = 1
-Config.CanTake = false
+Config.BankMoney = false -- Set to true if you want the money to go into the players bank
+Config.UseTimes = true
+Config.TimeOpen = 7
+Config.TimeClosed = 17
+
+Config.PawnItems = {
+    [1] = {
+        item = "goldchain",
+        price = math.random(50,100)
+    },
+    [2] = {
+        item = "diamond_ring",
+        price = math.random(50,100)
+    },
+    [3] = {
+        item = "rolex",
+        price = math.random(50,100)
+    },
+    [4] = {
+        item = "10kgoldchain",
+        price = math.random(50,100)
+    },
+    [5] = {
+        item = "tablet",
+        price = math.random(50,100)
+    }
+    ,
+    [6] = {
+        item = "iphone",
+        price = math.random(50,100)
+    }
+    ,
+    [7] = {
+        item = "samsungphone",
+        price = math.random(50,100)
+    }
+    ,
+    [8] = {
+        item = "laptop",
+        price = math.random(50,100)
+    }
+}

@@ -4,12 +4,10 @@ game 'gta5'
 description 'QB-Pawnshop'
 version '1.0.0'
 
-shared_script 'config.lua'
-server_script 'server/main.lua'
-
-client_scripts {
-	'client/main.lua',
-	'client/melt.lua'
+shared_scripts {
+	'config.lua'
 }
 
-lua54 'yes'
+server_script 'server/main.lua'
+
+client_script 'client/main.lua'

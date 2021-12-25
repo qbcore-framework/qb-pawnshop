@@ -9,7 +9,7 @@ Pawn Shop For QB-Core
         length = 2.35,
         width = 0.5,
         heading = 297,
-        debugPoly = true,
+        debugPoly = false,
         minZ = 100.87,
         maxZ = 104.67,
         options = {

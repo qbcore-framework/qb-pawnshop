@@ -27,7 +27,7 @@ RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmo
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
         meltTime = 0
         meltTime = (tonumber(itemAmount) * item.time)
-        TriggerClientEvent('qb-pawnshop:client:startMelting', src,item, tonumber(itemAmount), (meltTime* 60000))
+        TriggerClientEvent('qb-pawnshop:client:startMelting', src,item, tonumber(itemAmount), (meltTime* 60000/1000))
 
         TriggerClientEvent("QBCore:Notify", src,  "Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
     else

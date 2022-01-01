@@ -257,7 +257,6 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
 		end
 		if meltingItem.amount ~= nil then
 			if tonumber(meltingItem.amount) > 0 then
-	
 				TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount,item)
 
 			else
@@ -269,9 +268,11 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
 	end
 end)
 
-RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount, meltTime)
+RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount, meltTimees)
     if not isMelting then
         isMelting = true
+
+		meltTime = meltTimees
         CreateThread(function()
             while isMelting do
                 if LocalPlayer.state.isLoggedIn then

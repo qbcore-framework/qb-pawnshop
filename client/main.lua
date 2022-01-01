@@ -258,10 +258,9 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
 		if meltingItem.amount ~= nil then
 			if tonumber(meltingItem.amount) > 0 then
 				meltTime = 0
-				TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount)
-				meltTime = (tonumber(meltingItem.amount) * item.time)
-				TriggerEvent('qb-pawnshop:client:startMelting', item, tonumber(meltingItem.amount), (meltTime* 60000))
-				QBCore.Functions.Notify("Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
+				TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount,item)
+
+				--QBCore.Functions.Notify("Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
 			else
 				QBCore.Functions.Notify("You didn't give me anything to melt...", "error")
 			end

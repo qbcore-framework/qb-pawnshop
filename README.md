@@ -1,28 +1,6 @@
 # qb-pawnshop
 Pawn Shop For QB-Core
 
-# Add this to qb-target Config.BoxZones
-```
-["pawn"] = {
-        name = "Pawnshop",
-        coords = vector3(411.94, 315.5, 103.02),
-        length = 2.35,
-        width = 0.5,
-        heading = 297,
-        debugPoly = false,
-        minZ = 100.87,
-        maxZ = 104.67,
-        options = {
-            {
-                event = "qb-pawnshop:client:openMenu",
-                icon = "fas fa-ring",
-                label = "Pawn Items",
-            },
-        },
-        distance = 2.5
-    },
-```
-
 # License
 
     QBCore Framework

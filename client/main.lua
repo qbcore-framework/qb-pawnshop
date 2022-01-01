@@ -1,6 +1,8 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local isMelting = false
 local canTake = false
+local inRange = false
+local headerOpen = false
 local meltedItem = {}
 local meltTime
 
@@ -16,6 +18,34 @@ CreateThread(function()
 	EndTextCommandSetBlipName(blip)
 end)
 
+CreateThread(function()
+	while true do
+		Wait(500)
+		local pos = GetEntityCoords(PlayerPedId())
+		if #(pos - Config.PawnLocation) < 1.5 then
+			inRange = true
+		else
+			inRange = false
+		end
+		if inRange and not headerOpen then
+			headerOpen = true
+			exports['qb-menu']:showHeader({
+				{
+					header = "Pawn Shop",
+					txt = "Open the Pawn Shop",
+					params = {
+						event = "qb-pawnshop:client:openMenu"
+					}
+				}
+			})
+		end
+		if not inRange and headerOpen then
+			headerOpen = false
+			exports['qb-menu']:closeMenu()
+		end
+    end
+end)
+
 RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 	if Config.UseTimes then
 		if GetClockHours() >= Config.TimeOpen and GetClockHours() <= Config.TimeClosed then
@@ -25,8 +55,8 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 					isMenuHeader = true,
 				},
 				{
-					header = "Pawn Items",
-					txt = "Open the Pawn Shop",
+					header = "Sell",
+					txt = "Sell Items To The Pawn Shop",
 					params = {
 						event = "qb-pawnshop:client:openPawn",
 						args = {
@@ -71,8 +101,8 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 				isMenuHeader = true,
 			},
 			{
-				header = "Pawn Items",
-				txt = "Open the Pawn Shop",
+				header = "Sell",
+				txt = "Sell Items To The Pawn Shop",
 				params = {
 					event = "qb-pawnshop:client:openPawn",
 					args = {
@@ -138,6 +168,12 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
 				end
 			end
 		end
+		pawnMenu[#pawnMenu+1] = {
+			header = "⬅ Go Back",
+			params = {
+				event = "qb-pawnshop:client:openMenu"
+			}
+		}
 		exports['qb-menu']:openMenu(pawnMenu)
 	end)
 end)
@@ -171,6 +207,12 @@ RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
 				end
 			end
 		end
+		meltMenu[#meltMenu+1] = {
+			header = "⬅ Go Back",
+			params = {
+				event = "qb-pawnshop:client:openMenu"
+			}
+		}
 		exports['qb-menu']:openMenu(meltMenu)
 	end)
 end)

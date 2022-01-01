@@ -1,47 +1,8 @@
--- Variables
-
-QBCore = exports['qb-core']:GetCoreObject()
-local sellItemsSet = false
-local sellPrice = 0
-local sellHardwareItemsSet = false
-local sellHardwarePrice = 0
-
--- Functions
-
-function GetSellingPrice()
-	local price = 0
-	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getSellPrice', function(result)
-		price = result
-	end)
-	Wait(500)
-	return price
-end
-
-function GetSellingHardwarePrice()
-	local price = 0
-	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getSellHardwarePrice', function(result)
-		price = result
-	end)
-	Wait(500)
-	return price
-end
-
-function DrawText3D(x, y, z, text)
-	SetTextScale(0.35, 0.35)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    SetTextCentre(true)
-    AddTextComponentString(text)
-    SetDrawOrigin(x,y,z, 0)
-    DrawText(0.0, 0.0)
-    local factor = (string.len(text)) / 370
-    DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
-    ClearDrawOrigin()
-end
-
--- Thread
+local QBCore = exports['qb-core']:GetCoreObject()
+local isMelting = false
+local canTake = false
+local meltedItem = {}
+local meltTime
 
 CreateThread(function()
 	local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
@@ -53,85 +14,252 @@ CreateThread(function()
 	BeginTextCommandSetBlipName("STRING")
 	AddTextComponentSubstringPlayerName("Pawn Shop")
 	EndTextCommandSetBlipName(blip)
-	while true do
-		Wait(1)
-		local inRange = false
-		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - Config.PawnLocation) < 5.0 then
-			inRange = true
-			if #(pos - Config.PawnLocation) < 1.5 then
-				if GetClockHours() >= 7 and GetClockHours() <= 17 then
-					if not sellItemsSet then
-						sellPrice = GetSellingPrice()
-						sellItemsSet = true
-					elseif sellItemsSet and sellPrice ~= 0 then
-						DrawText3D(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z, "~g~E~w~ - Sell Watches/ Necklaces / Rings ($"..sellPrice..")")
-						if IsControlJustReleased(0, 38) then
-							TaskStartScenarioInPlace(PlayerPedId(), "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
-                            QBCore.Functions.Progressbar("sell_pawn_items", "Selling Items", math.random(15000, 25000), false, true, {}, {}, {}, {}, function() -- Done
-                                ClearPedTasks(PlayerPedId())
-								TriggerServerEvent("qb-pawnshop:server:sellPawnItems")
-								sellItemsSet = false
-								sellPrice = 0
-                            end, function() -- Cancel
-								ClearPedTasks(PlayerPedId())
-								QBCore.Functions.Notify("Canceled..", "error")
-							end)
-						end
-					else
-						DrawText3D(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z, "Pawnshop: You have nothing to sell")
-					end
-				else
-					DrawText3D(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z, "Pawnshop is closed, opens from ~r~7:00")
+end)
+
+RegisterNetEvent('qb-pawnshop:client:openMenu', function()
+	if Config.UseTimes then
+		if GetClockHours() >= Config.TimeOpen and GetClockHours() <= Config.TimeClosed then
+			local pawnShop = {
+				{
+					header = "Pawn Shop",
+					isMenuHeader = true,
+				},
+				{
+					header = "Pawn Items",
+					txt = "Open the Pawn Shop",
+					params = {
+						event = "qb-pawnshop:client:openPawn",
+						args = {
+							items = Config.PawnItems
+						}
+					}
+				}
+			}
+			if not isMelting then
+				pawnShop[#pawnShop + 1] = {
+					header = "Melt Items",
+					txt = "Open the Melting Shop",
+					params = {
+						event = "qb-pawnshop:client:openMelt",
+						args = {
+							items = Config.MeltingItems
+						}
+					}
+				}
+			end
+			if canTake then
+				pawnShop[#pawnShop + 1] = {
+					header = "Pickup Melted Items",
+					txt = "",
+					params = {
+						isServer = true,
+						event = "qb-pawnshop:server:pickupMelted",
+						args = {
+							items = meltedItem
+						}
+					}
+				}
+			end
+			exports['qb-menu']:openMenu(pawnShop)
+		else
+			QBCore.Functions.Notify("Pawnshop is closed. Come back between "..Config.TimeOpen..":00 AM - "..Config.TimeClosed..':00 PM')
+		end
+	else
+		local pawnShop = {
+			{
+				header = "Pawn Shop Menu",
+				isMenuHeader = true,
+			},
+			{
+				header = "Pawn Items",
+				txt = "Open the Pawn Shop",
+				params = {
+					event = "qb-pawnshop:client:openPawn",
+					args = {
+						items = Config.PawnItems
+					}
+				}
+			}
+		}
+		if not isMelting then
+			pawnShop[#pawnShop + 1] = {
+				header = "Melt Items",
+				txt = "Open the Melting Shop",
+				params = {
+					event = "qb-pawnshop:client:openMelt",
+					args = {
+						items = Config.MeltingItems
+					}
+				}
+			}
+		end
+		if canTake then
+			pawnShop[#pawnShop + 1] = {
+				header = "Pickup Melted Items",
+				txt = "",
+				params = {
+					isServer = true,
+					event = "qb-pawnshop:server:pickupMelted",
+					args = {
+						items = meltedItem
+					}
+				}
+			}
+		end
+		exports['qb-menu']:openMenu(pawnShop)
+	end
+end)
+
+RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
+	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getInv', function(inventory)
+		local PlyInv = inventory
+		local pawnMenu = {
+			{
+				header = "Pawn Menu",
+				isMenuHeader = true,
+			}
+		}
+		for k,v in pairs(PlyInv) do
+			for i = 1, #data.items do
+				if v.name == data.items[i].item then
+					pawnMenu[#pawnMenu +1] = {
+						header = QBCore.Shared.Items[v.name].label,
+						txt = "Selling Price: $"..data.items[i].price,
+						params = {
+							event = "qb-pawnshop:client:pawnitems",
+							args = {
+								label = QBCore.Shared.Items[v.name].label,
+								price = data.items[i].price,
+								name = v.name,
+								amount = v.amount
+							}
+						}
+					}
 				end
 			end
 		end
-		if not inRange then
-			sellPrice = 0
-			sellItemsSet = false
-			Wait(2500)
+		exports['qb-menu']:openMenu(pawnMenu)
+	end)
+end)
+
+RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
+	QBCore.Functions.TriggerCallback('qb-pawnshop:server:getInv', function(inventory)
+		local PlyInv = inventory
+		local meltMenu = {
+			{
+				header = "Melting Menu",
+				isMenuHeader = true,
+			}
+		}
+		for k,v in pairs(PlyInv) do
+			for i = 1, #data.items do
+				if v.name == data.items[i].item then
+					meltMenu[#meltMenu +1] = {
+						header = QBCore.Shared.Items[v.name].label,
+						txt = "Melt "..QBCore.Shared.Items[v.name].label,
+						params = {
+							event = "qb-pawnshop:client:meltItems",
+							args = {
+								label = QBCore.Shared.Items[v.name].label,
+								reward = data.items[i].rewards,
+								name = v.name,
+								amount = v.amount,
+								time = data.items[i].meltTime
+							}
+						}
+					}
+				end
+			end
+		end
+		exports['qb-menu']:openMenu(meltMenu)
+	end)
+end)
+
+RegisterNetEvent("qb-pawnshop:client:pawnitems", function(item)
+	local sellingItem = exports['qb-input']:ShowInput({
+		header = "Pawn Item",
+		submitText = "Sell Item",
+		inputs = {
+			{
+				type = 'number',
+				isRequired = false,
+				name = 'amount',
+				text = 'max amount '..item.amount
+			}
+		}
+	})
+	if sellingItem then
+		if not sellingItem.amount then
+			return
+		end
+		TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+	end
+end)
+
+RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
+	local meltingItem = exports['qb-input']:ShowInput({
+		header = "Melt Item",
+		submitText = "Melt",
+		inputs = {
+			{
+				type = 'number',
+				isRequired = false,
+				name = 'amount',
+				text = 'Max Amount '..item.amount
+			}
+		}
+	})
+	if meltingItem then
+		if not meltingItem.amount then
+			return
+		end
+		if meltingItem.amount ~= nil then
+			if tonumber(meltingItem.amount) > 0 then
+				meltTime = 0
+				TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount)
+				meltTime = (tonumber(meltingItem.amount) * item.time)
+				TriggerEvent('qb-pawnshop:client:startMelting', item, tonumber(meltingItem.amount), (meltTime* 60000))
+				QBCore.Functions.Notify("Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
+			else
+				QBCore.Functions.Notify("You didn't give me anything to melt...", "error")
+			end
+		else
+			QBCore.Functions.Notify("You didn't give me anything to melt...", "error")
 		end
 	end
 end)
 
-CreateThread(function()
-	while true do
-		Wait(1)
-		local inRange = false
-		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - Config.PawnHardwareLocation) < 5.0 then
-			inRange = true
-			if #(pos - Config.PawnHardwareLocation) < 1.5 then
-				if GetClockHours() >= 9 and GetClockHours() <= 16 then
-					if not sellHardwareItemsSet then
-						sellHardwarePrice = GetSellingHardwarePrice()
-						sellHardwareItemsSet = true
-					elseif sellHardwareItemsSet and sellHardwarePrice ~= 0 then
-						DrawText3D(Config.PawnHardwareLocation.x, Config.PawnHardwareLocation.y, Config.PawnHardwareLocation.z, "~g~E~w~ - Sale iPhones/Samsung S10s/Tablets/Laptops ($"..sellHardwarePrice..")")
-						if IsControlJustReleased(0, 38) then
-							TaskStartScenarioInPlace(PlayerPedId(), "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
-                            QBCore.Functions.Progressbar("sell_pawn_items", "Sell things", math.random(15000, 25000), false, true, {}, {}, {}, {}, function() -- Done
-                                ClearPedTasks(PlayerPedId())
-								TriggerServerEvent("qb-pawnshop:server:sellHardwarePawnItems")
-								sellHardwareItemsSet = false
-								sellHardwarePrice = 0
-                            end, function() -- Cancel
-								ClearPedTasks(PlayerPedId())
-								QBCore.Functions.Notify("Canceled", "error")
-							end)
+RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount, meltTime)
+    if not isMelting then
+        isMelting = true
+        CreateThread(function()
+            while isMelting do
+                if LocalPlayer.state.isLoggedIn then
+                    meltTime = meltTime - 1
+                    if meltTime <= 0 then
+                        canTake = true
+                        isMelting = false
+						table.insert(meltedItem, {item = item, amount = meltingAmount})
+						if Config.SendMeltingEmail then
+							TriggerServerEvent('qb-phone:server:sendNewMail', {
+								sender = Config.EmailSender,
+								subject = Config.EmailSubject,
+								message = Config.EmailMessage,
+								button = {}
+							})
+						else
+							QBCore.Functions.Notify("Your items have been melted. Come pick them up...", "success")
 						end
-					else
-						DrawText3D(Config.PawnHardwareLocation.x, Config.PawnHardwareLocation.y, Config.PawnHardwareLocation.z, "Pawnshop: You have nothing to sell")
-					end
-				else
-					DrawText3D(Config.PawnHardwareLocation.x, Config.PawnHardwareLocation.y, Config.PawnHardwareLocation.z, "Pawnshop closed, open from ~r~9:00")
-				end
-			end
-		end
-		if not inRange then
-			sellHardwarePrice = 0
-			sellHardwareItemsSet = false
-			Wait(2500)
-		end
-	end
+                    end
+                else
+                    break
+                end
+                Wait(1000)
+            end
+        end)
+    end
+end)
+
+RegisterNetEvent('qb-pawnshop:client:resetPickup', function()
+	canTake = false
 end)

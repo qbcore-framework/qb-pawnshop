@@ -1,26 +1,42 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-
+local  meltTime = 0
 RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmount, itemPrice)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local totalPrice = (itemAmount * itemPrice)
 
-    Player.Functions.RemoveItem(itemName, itemAmount)
-    if Config.BankMoney then
-        Player.Functions.AddMoney("bank", totalPrice)
+    if Player.Functions.RemoveItem(itemName, itemAmount) then
+        if Config.BankMoney then
+            Player.Functions.AddMoney("bank", totalPrice)
+        else
+            Player.Functions.AddMoney("cash", totalPrice)
+        end
+        TriggerClientEvent("QBCore:Notify", src, "You have sold for $"..totalPrice, "success")
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
     else
-        Player.Functions.AddMoney("cash", totalPrice)
+     TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
     end
-    TriggerClientEvent("QBCore:Notify", src, "You have sold "..QBCore.Shared.Items[itemName].." for $"..totalPrice, "success")
+    
 end)
 
-RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmount)
+RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmount,item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
-    Player.Functions.RemoveItem(itemName, itemAmount)
-    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+    if Player.Functions.RemoveItem(itemName, itemAmount) then
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+        meltTime = 0
+        meltTime = (tonumber(itemAmount) * item.time)
+        TriggerClientEvent('qb-pawnshop:client:startMelting', src,item, tonumber(itemAmount), (meltTime* 60000/1000))
+
+        TriggerClientEvent("QBCore:Notify", src,  "Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
+    else
+        TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
+    end
+
 end)
+
+
 
 RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)
     local src = source

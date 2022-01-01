@@ -11,7 +11,8 @@ RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmou
         else
             Player.Functions.AddMoney("cash", totalPrice)
         end
-        TriggerClientEvent("QBCore:Notify", src, "You have sold "..QBCore.Shared.Items[itemName].." for $"..totalPrice, "success")
+        TriggerClientEvent("QBCore:Notify", src, "You have sold for $"..totalPrice, "success")
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
     else
      TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
     end
@@ -22,8 +23,12 @@ RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmo
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
-    Player.Functions.RemoveItem(itemName, itemAmount)
-    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+    if Player.Functions.RemoveItem(itemName, itemAmount) then
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+    else
+        TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
+    end
+
 end)
 
 RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)

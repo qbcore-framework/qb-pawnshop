@@ -1,5 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-
+local  meltTime = 0
 RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmount, itemPrice)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
@@ -19,17 +19,24 @@ RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmou
     
 end)
 
-RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmount)
+RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmount,item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
     if Player.Functions.RemoveItem(itemName, itemAmount) then
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+        meltTime = 0
+        meltTime = (tonumber(itemAmount) * item.time)
+        TriggerClientEvent('qb-pawnshop:client:startMelting', src,item, tonumber(itemAmount), (meltTime* 60000))
+
+        TriggerClientEvent("QBCore:Notify", src,  "Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
     else
         TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
     end
 
 end)
+
+
 
 RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)
     local src = source

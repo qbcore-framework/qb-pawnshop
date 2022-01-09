@@ -3,7 +3,6 @@ local isMelting = false
 local canTake = false
 local inRange = false
 local headerOpen = false
-local meltedItem = {}
 local meltTime
 
 CreateThread(function()
@@ -65,6 +64,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 					}
 				}
 			}
+
 			if not isMelting then
 				pawnShop[#pawnShop + 1] = {
 					header = "Melt Items",
@@ -77,6 +77,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 					}
 				}
 			end
+
 			if canTake then
 				pawnShop[#pawnShop + 1] = {
 					header = "Pickup Melted Items",
@@ -111,6 +112,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 				}
 			}
 		}
+
 		if not isMelting then
 			pawnShop[#pawnShop + 1] = {
 				header = "Melt Items",
@@ -123,6 +125,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 				}
 			}
 		end
+
 		if canTake then
 			pawnShop[#pawnShop + 1] = {
 				header = "Pickup Melted Items",
@@ -149,6 +152,7 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
 				isMenuHeader = true,
 			}
 		}
+
 		for k,v in pairs(PlyInv) do
 			for i = 1, #data.items do
 				if v.name == data.items[i].item then
@@ -168,6 +172,7 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
 				end
 			end
 		end
+
 		pawnMenu[#pawnMenu+1] = {
 			header = "⬅ Go Back",
 			params = {
@@ -207,6 +212,7 @@ RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
 				end
 			end
 		end
+
 		meltMenu[#meltMenu+1] = {
 			header = "⬅ Go Back",
 			params = {
@@ -230,11 +236,17 @@ RegisterNetEvent("qb-pawnshop:client:pawnitems", function(item)
 			}
 		}
 	})
+
 	if sellingItem then
 		if not sellingItem.amount then
 			return
 		end
-		TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+
+		if tonumber(sellingItem.amount) > 0 then
+			TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+		else
+			QBCore.Functions.Notify("Trying to sell a negative amount?", "error")
+		end
 	end
 end)
 
@@ -251,6 +263,7 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
 			}
 		}
 	})
+
 	if meltingItem then
 		if not meltingItem.amount then
 			return
@@ -271,8 +284,9 @@ end)
 RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount, meltTimees)
     if not isMelting then
         isMelting = true
-
 		meltTime = meltTimees
+		meltedItem = {}
+
         CreateThread(function()
             while isMelting do
                 if LocalPlayer.state.isLoggedIn then

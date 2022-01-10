@@ -7,10 +7,6 @@ Config.TimeOpen = 7 -- Opening Time
 Config.TimeClosed = 17 -- Closing Time
 Config.SendMeltingEmail = true
 
-Config.EmailSender = "Pawn Shop"
-Config.EmailSubject = "Melting Items"
-Config.EmailMessage = "We finished melting your items. You can come pick them up at any time."
-
 Config.PawnItems = {
     [1] = {
         item = "goldchain",
@@ -31,18 +27,15 @@ Config.PawnItems = {
     [5] = {
         item = "tablet",
         price = math.random(50,100)
-    }
-    ,
+    },
     [6] = {
         item = "iphone",
         price = math.random(50,100)
-    }
-    ,
+    },
     [7] = {
         item = "samsungphone",
         price = math.random(50,100)
-    }
-    ,
+    },
     [8] = {
         item = "laptop",
         price = math.random(50,100)

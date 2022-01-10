@@ -12,10 +12,10 @@ RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmou
             Player.Functions.AddMoney("cash", totalPrice)
         end
 
-        TriggerClientEvent("QBCore:Notify", src, "You have sold "..tonumber(itemAmount).. " x " ..QBCore.Shared.Items[itemName].label.. " for $"..totalPrice, "success")
+        TriggerClientEvent("QBCore:Notify", src, Lang:t('success.sold', {value = tonumber(itemAmount), value2 = QBCore.Shared.Items[itemName].label, value3 = totalPrice}), 'success')
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
     else
-        TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
+        TriggerClientEvent("QBCore:Notify", src, Lang:t('error.no_items'), "error")
     end
 end)
 
@@ -30,9 +30,9 @@ RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmo
         meltTime = (tonumber(itemAmount) * item.time)
         TriggerClientEvent('qb-pawnshop:client:startMelting', src, item, tonumber(itemAmount), (meltTime* 60000/1000))
 
-        TriggerClientEvent("QBCore:Notify", src,  "Give me "..meltTime.." minutes and I'll have your stuff melted...", "success")
+        TriggerClientEvent("QBCore:Notify", src, Lang:t('info.melt_wait', {value = meltTime}), "primary")
     else
-        TriggerClientEvent("QBCore:Notify", src, "ERROR! Not enough items maybe?", "error")
+        TriggerClientEvent("QBCore:Notify", src, Lang:t('error.no_items'), "error")
     end
 end)
 
@@ -48,7 +48,7 @@ RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)
             rewardAmount = m.amount
             Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount))
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
-            TriggerClientEvent('QBCore:Notify', src, 'You received '..(meltedAmount * rewardAmount).. ' x '..QBCore.Shared.Items[m.item].label, 'success')
+            TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', {value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label}), 'success')
         end
     end
 

@@ -7,7 +7,7 @@ Config.TimeOpen = 7 -- Opening Time
 Config.TimeClosed = 17 -- Closing Time
 Config.SendMeltingEmail = true
 
-Config.UseTarget = false
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
 
 Config.PawnItems = {
     [1] = {

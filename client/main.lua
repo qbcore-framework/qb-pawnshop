@@ -22,7 +22,7 @@ if Config.UseTarget then
       exports['qb-target']:AddBoxZone("PawnShop", Config.PawnLocation, 2, 3, {
         name = "PawnShop",
         heading = 207,
-        debugPoly = true,
+        debugPoly = false,
         minZ = 100.97,
         maxZ = 105.42,
     }, {

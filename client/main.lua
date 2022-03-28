@@ -22,7 +22,6 @@ if Config.UseTarget then
       exports['qb-target']:AddBoxZone("PawnShop", Config.PawnLocation, 2, 3, {
         name = "PawnShop",
         heading = 207,
-        debugPoly = false,
         minZ = 100.97,
         maxZ = 105.42,
     }, {
@@ -39,11 +38,11 @@ if Config.UseTarget then
   end)
 else
     CreateThread(function()
-        local zone = BoxZone:Create(
-            Config.PawnLocation, 2, 3, {
+        local zone = BoxZone:Create(Config.PawnLocation, 2, 3, {
             name="box_zone",
-            debugPoly=true,
             heading = 207,
+            minZ = 100.97,
+            maxZ = 105.42,
         })
 
         local pawnShopCombo = ComboZone:Create({zone}, {name = "pawnshopZone", debugPoly = false})

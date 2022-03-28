@@ -7,6 +7,8 @@ Config.TimeOpen = 7 -- Opening Time
 Config.TimeClosed = 17 -- Closing Time
 Config.SendMeltingEmail = true
 
+Config.UseTarget = false
+
 Config.PawnItems = {
     [1] = {
         item = "goldchain",

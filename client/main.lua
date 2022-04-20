@@ -6,63 +6,69 @@ local headerOpen = false
 local meltTime
 
 CreateThread(function()
-    local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
-    SetBlipSprite(blip, 431)
-    SetBlipDisplay(blip, 4)
-    SetBlipScale(blip, 0.7)
-    SetBlipAsShortRange(blip, true)
-    SetBlipColour(blip, 5)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentSubstringPlayerName(Lang:t("info.title"))
-    EndTextCommandSetBlipName(blip)
+    for k, v in pairs(Config.PawnLocation) do
+        local blip = AddBlipForCoord(value.location.x, value.location.y, value.location.z)
+        SetBlipSprite(blip, 431)
+        SetBlipDisplay(blip, 4)
+        SetBlipScale(blip, 0.7)
+        SetBlipAsShortRange(blip, true)
+        SetBlipColour(blip, 5)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentSubstringPlayerName(Lang:t("info.title"))
+        EndTextCommandSetBlipName(blip)
+    end
 end)
 
 if Config.UseTarget then
-    CreateThread(function()
-      exports['qb-target']:AddBoxZone("PawnShop", Config.PawnLocation, 2, 3, {
-        name = "PawnShop",
-        heading = 207,
-        minZ = 100.97,
-        maxZ = 105.42,
-    }, {
-        options = {
-            {
-                type = "client",
-                event = "qb-pawnshop:client:openMenu",
-                icon = "fas fa-ring",
-                label = "Pawn Shop",
-            },
-        },
-        distance = 3
-    })
-  end)
-else
-    CreateThread(function()
-        local zone = BoxZone:Create(Config.PawnLocation, 2, 3, {
-            name="box_zone",
+    for k, v in pairs(Config.PawnLocation) do
+        CreateThread(function()
+        exports['qb-target']:AddBoxZone(k, v.location, 2, 3, {
+            name = k,
             heading = 207,
-            minZ = 100.97,
-            maxZ = 105.42,
+            minZ = v.location.z - 3,
+            maxZ = v.location.z + 2,
+        }, {
+            options = {
+                {
+                    type = "client",
+                    event = "qb-pawnshop:client:openMenu",
+                    icon = "fas fa-ring",
+                    label = "Pawn Shop",
+                },
+            },
+            distance = 3
         })
-
-        local pawnShopCombo = ComboZone:Create({zone}, {name = "pawnshopZone", debugPoly = false})
-        pawnShopCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside then
-                exports['qb-menu']:showHeader({
-                    {
-                        header = Lang:t('info.title'),
-                        txt = Lang:t('info.open_pawn'),
-                        params = {
-                            event = "qb-pawnshop:client:openMenu"
-                        }
-                    }
-                })
-            else
-                headerOpen = false
-                exports['qb-menu']:closeMenu()
-            end
         end)
-    end)
+    end
+else
+    for k, v in pairs(Config.PawnLocation) do
+        CreateThread(function()
+            local zone = BoxZone:Create(v.location, 2, 3, {
+                name="box_zone",
+                heading = 207,
+                minZ = v.location.z - 3,
+                maxZ = v.location.z + 2,
+            })
+
+            local pawnShopCombo = ComboZone:Create({zone}, {name = "pawnshopZone", debugPoly = false})
+            pawnShopCombo:onPlayerInOut(function(isPointInside)
+                if isPointInside then
+                    exports['qb-menu']:showHeader({
+                        {
+                            header = Lang:t('info.title'),
+                            txt = Lang:t('info.open_pawn'),
+                            params = {
+                                event = "qb-pawnshop:client:openMenu"
+                            }
+                        }
+                    })
+                else
+                    headerOpen = false
+                    exports['qb-menu']:closeMenu()
+                end
+            end)
+        end)
+    end
 end
 
 RegisterNetEvent('qb-pawnshop:client:openMenu', function()

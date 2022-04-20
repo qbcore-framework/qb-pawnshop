@@ -1,6 +1,8 @@
 Config = {}
 
-Config.PawnLocation = vector3(412.34, 314.81, 103.13)
+Config.PawnLocation = {
+    one = { location = vector3(412.34, 314.81, 103.13)},
+}
 Config.BankMoney = false -- Set to true if you want the money to go into the players bank
 Config.UseTimes = false -- Set to false if you want the pawnshop open 24/7
 Config.TimeOpen = 7 -- Opening Time

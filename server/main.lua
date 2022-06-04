@@ -1,9 +1,27 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
+function ExploitBan(id, reason)
+	MySQL.insert('INSERT INTO bans (name, license, discord, ip, reason, expire, bannedby) VALUES (?, ?, ?, ?, ?, ?, ?)', {
+		GetPlayerName(id),
+		QBCore.Functions.GetIdentifier(id, 'license'),
+		QBCore.Functions.GetIdentifier(id, 'discord'),
+		QBCore.Functions.GetIdentifier(id, 'ip'),
+		reason,
+		2147483647,
+		'qb-pawnshop'
+	})
+	TriggerEvent('qb-log:server:CreateLog', 'pawnshop', 'Player Banned', 'red', string.format('%s was banned by %s for %s', GetPlayerName(id), 'qb-pawnshop', reason), true)
+	DropPlayer(id, 'You were permanently banned by the server for: Exploiting')
+end
+
 RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmount, itemPrice)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local totalPrice = (tonumber(itemAmount) * itemPrice)
+    local playerCoords = GetEntityCoords(GetPlayerPed(src))
+    local dist = #(playerCoords - Config.PawnLocation)
+    
+    if dist > 5 then ExploitBan(src, 'sellPawnItems Exploiting') return end
 
     if Player.Functions.RemoveItem(itemName, tonumber(itemAmount)) then
         if Config.BankMoney then
@@ -38,6 +56,10 @@ end)
 RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    local playerCoords = GetEntityCoords(GetPlayerPed(src))
+    local dist = #(playerCoords - Config.PawnLocation)
+
+    if dist > 5 then ExploitBan(src, 'pickupMelted Exploiting') return end
 
     for _, v in pairs(item.items) do
         local meltedAmount = v.amount

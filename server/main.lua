@@ -35,6 +35,7 @@ RegisterNetEvent("qb-pawnshop:server:sellPawnItems", function(itemName, itemAmou
     else
         TriggerClientEvent("QBCore:Notify", src, Lang:t('error.no_items'), "error")
     end
+    TriggerClientEvent("qb-pawnshop:client:openMenu", src)
 end)
 
 RegisterNetEvent("qb-pawnshop:server:meltItemRemove", function(itemName, itemAmount, item)
@@ -70,8 +71,8 @@ RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)
             TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', {value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label}), 'success')
         end
     end
-
     TriggerClientEvent('qb-pawnshop:client:resetPickup', src)
+    TriggerClientEvent("qb-pawnshop:client:openMenu", src)
 end)
 
 QBCore.Functions.CreateCallback('qb-pawnshop:server:getInv', function(source, cb)

@@ -66,9 +66,13 @@ RegisterNetEvent("qb-pawnshop:server:pickupMelted", function(item)
         local meltedAmount = v.amount
         for _, m in pairs(v.item.reward) do
             local rewardAmount = m.amount
-            Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount))
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
-            TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', {value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label}), 'success')
+            if Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount)) then
+                TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
+                TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', {value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label}), 'success')
+            else
+                TriggerClientEvent("qb-pawnshop:client:openMenu", src)
+                return
+            end
         end
     end
     TriggerClientEvent('qb-pawnshop:client:resetPickup', src)

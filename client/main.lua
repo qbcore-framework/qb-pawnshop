@@ -5,47 +5,36 @@ local canTake = false
 local meltTime
 local meltedItem = {}
 
-CreateThread(function()
-    local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
-    SetBlipSprite(blip, 431)
-    SetBlipDisplay(blip, 4)
-    SetBlipScale(blip, 0.7)
-    SetBlipAsShortRange(blip, true)
-    SetBlipColour(blip, 5)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentSubstringPlayerName(Lang:t("info.title"))
-    EndTextCommandSetBlipName(blip)
-end)
-
 if Config.UseTarget then
     CreateThread(function()
-      exports['qb-target']:AddBoxZone("PawnShop", Config.PawnLocation, 2, 3, {
-        name = "PawnShop",
-        heading = 207,
-        minZ = 100.97,
-        maxZ = 105.42,
-    }, {
-        options = {
-            {
-                type = "client",
-                event = "qb-pawnshop:client:openMenu",
-                icon = "fas fa-ring",
-                label = "Pawn Shop",
+        exports['qb-target']:AddBoxZone('PawnShop', Config.PawnLocation.coords, Config.PawnLocation.length, Config.PawnLocation.width, {
+            name = 'PawnShop',
+            heading = Config.PawnLocation.heading,
+            minZ = Config.PawnLocation.minZ,
+            maxZ = Config.PawnLocation.maxZ,
+            debugPoly = Config.PawnLocation.debugPoly,
+        }, {
+            options = {
+                {
+                    type = 'client',
+                    event = 'qb-pawnshop:client:openMenu',
+                    icon = 'fas fa-ring',
+                    label = 'Pawn Shop',
+                },
             },
-        },
-        distance = 3
-    })
-  end)
+            distance = Config.PawnLocation.distance
+        })
+    end)
 else
     CreateThread(function()
-        local zone = BoxZone:Create(Config.PawnLocation, 2, 3, {
-            name="box_zone",
-            heading = 207,
-            minZ = 100.97,
-            maxZ = 105.42,
+        local zone = BoxZone:Create(Config.PawnLocation.coords, Config.PawnLocation.length, Config.PawnLocation.width, {
+            name = 'box_zone',
+            heading = Config.PawnLocation.heading,
+            minZ = Config.PawnLocation.minZ,
+            maxZ = Config.PawnLocation.maxZ,
         })
 
-        local pawnShopCombo = ComboZone:Create({zone}, {name = "pawnshopZone", debugPoly = false})
+        local pawnShopCombo = ComboZone:Create({ zone }, { name = 'pawnshopZone', debugPoly = Config.PawnLocation.debugPoly})
         pawnShopCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 exports['qb-menu']:showHeader({
@@ -53,7 +42,7 @@ else
                         header = Lang:t('info.title'),
                         txt = Lang:t('info.open_pawn'),
                         params = {
-                            event = "qb-pawnshop:client:openMenu"
+                            event = 'qb-pawnshop:client:openMenu'
                         }
                     }
                 })
@@ -64,6 +53,7 @@ else
     end)
 end
 
+--Events
 RegisterNetEvent('qb-pawnshop:client:openMenu', function()
     if Config.UseTimes then
         if GetClockHours() >= Config.TimeOpen and GetClockHours() <= Config.TimeClosed then
@@ -76,7 +66,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
                     header = Lang:t('info.sell'),
                     txt = Lang:t('info.sell_pawn'),
                     params = {
-                        event = "qb-pawnshop:client:openPawn",
+                        event = 'qb-pawnshop:client:openPawn',
                         args = {
                             items = Config.PawnItems
                         }
@@ -89,7 +79,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
                     header = Lang:t('info.melt'),
                     txt = Lang:t('info.melt_pawn'),
                     params = {
-                        event = "qb-pawnshop:client:openMelt",
+                        event = 'qb-pawnshop:client:openMelt',
                         args = {
                             items = Config.MeltingItems
                         }
@@ -100,10 +90,10 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
             if canTake then
                 pawnShop[#pawnShop + 1] = {
                     header = Lang:t('info.melt_pickup'),
-                    txt = "",
+                    txt = '',
                     params = {
                         isServer = true,
-                        event = "qb-pawnshop:server:pickupMelted",
+                        event = 'qb-pawnshop:server:pickupMelted',
                         args = {
                             items = meltedItem
                         }
@@ -112,7 +102,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
             end
             exports['qb-menu']:openMenu(pawnShop)
         else
-            QBCore.Functions.Notify(Lang:t('info.pawn_closed', {value = Config.TimeOpen, value2 = Config.TimeClosed}))
+            QBCore.Functions.Notify(Lang:t('info.pawn_closed', { value = Config.TimeOpen, value2 = Config.TimeClosed }))
         end
     else
         local pawnShop = {
@@ -124,7 +114,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
                 header = Lang:t('info.sell'),
                 txt = Lang:t('info.sell_pawn'),
                 params = {
-                    event = "qb-pawnshop:client:openPawn",
+                    event = 'qb-pawnshop:client:openPawn',
                     args = {
                         items = Config.PawnItems
                     }
@@ -137,7 +127,7 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
                 header = Lang:t('info.melt'),
                 txt = Lang:t('info.melt_pawn'),
                 params = {
-                    event = "qb-pawnshop:client:openMelt",
+                    event = 'qb-pawnshop:client:openMelt',
                     args = {
                         items = Config.MeltingItems
                     }
@@ -148,10 +138,10 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function()
         if canTake then
             pawnShop[#pawnShop + 1] = {
                 header = Lang:t('info.melt_pickup'),
-                txt = "",
+                txt = '',
                 params = {
                     isServer = true,
-                    event = "qb-pawnshop:server:pickupMelted",
+                    event = 'qb-pawnshop:server:pickupMelted',
                     args = {
                         items = meltedItem
                     }
@@ -175,11 +165,11 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
         for _, v in pairs(PlyInv) do
             for i = 1, #data.items do
                 if v.name == data.items[i].item then
-                    pawnMenu[#pawnMenu +1] = {
+                    pawnMenu[#pawnMenu + 1] = {
                         header = QBCore.Shared.Items[v.name].label,
-                        txt = Lang:t('info.sell_items', {value = data.items[i].price}),
+                        txt = Lang:t('info.sell_items', { value = data.items[i].price }),
                         params = {
-                            event = "qb-pawnshop:client:pawnitems",
+                            event = 'qb-pawnshop:client:pawnitems',
                             args = {
                                 label = QBCore.Shared.Items[v.name].label,
                                 price = data.items[i].price,
@@ -192,10 +182,10 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
             end
         end
 
-        pawnMenu[#pawnMenu+1] = {
+        pawnMenu[#pawnMenu + 1] = {
             header = Lang:t('info.back'),
             params = {
-                event = "qb-pawnshop:client:openMenu"
+                event = 'qb-pawnshop:client:openMenu'
             }
         }
         exports['qb-menu']:openMenu(pawnMenu)
@@ -214,11 +204,11 @@ RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
         for _, v in pairs(PlyInv) do
             for i = 1, #data.items do
                 if v.name == data.items[i].item then
-                    meltMenu[#meltMenu +1] = {
+                    meltMenu[#meltMenu + 1] = {
                         header = QBCore.Shared.Items[v.name].label,
-                        txt = Lang:t('info.melt_item', {value = QBCore.Shared.Items[v.name].label}),
+                        txt = Lang:t('info.melt_item', { value = QBCore.Shared.Items[v.name].label }),
                         params = {
-                            event = "qb-pawnshop:client:meltItems",
+                            event = 'qb-pawnshop:client:meltItems',
                             args = {
                                 label = QBCore.Shared.Items[v.name].label,
                                 reward = data.items[i].rewards,
@@ -231,18 +221,17 @@ RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
                 end
             end
         end
-
-        meltMenu[#meltMenu+1] = {
+        meltMenu[#meltMenu + 1] = {
             header = Lang:t('info.back'),
             params = {
-                event = "qb-pawnshop:client:openMenu"
+                event = 'qb-pawnshop:client:openMenu'
             }
         }
         exports['qb-menu']:openMenu(meltMenu)
     end)
 end)
 
-RegisterNetEvent("qb-pawnshop:client:pawnitems", function(item)
+RegisterNetEvent('qb-pawnshop:client:pawnitems', function(item)
     local sellingItem = exports['qb-input']:ShowInput({
         header = Lang:t('info.title'),
         submitText = Lang:t('info.sell'),
@@ -251,11 +240,10 @@ RegisterNetEvent("qb-pawnshop:client:pawnitems", function(item)
                 type = 'number',
                 isRequired = false,
                 name = 'amount',
-                text = Lang:t('info.max', {value = item.amount})
+                text = Lang:t('info.max', { value = item.amount })
             }
         }
     })
-
     if sellingItem then
         if not sellingItem.amount then
             return
@@ -278,42 +266,39 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
                 type = 'number',
                 isRequired = false,
                 name = 'amount',
-                text = Lang:t('info.max', {value = item.amount})
+                text = Lang:t('info.max', { value = item.amount })
             }
         }
     })
-
     if meltingItem then
         if not meltingItem.amount then
             return
         end
         if meltingItem.amount ~= nil then
             if tonumber(meltingItem.amount) > 0 then
-                TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount,item)
-
+                TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount, item)
             else
-                QBCore.Functions.Notify(Lang:t('error.no_melt'), "error")
+                QBCore.Functions.Notify(Lang:t('error.no_melt'), 'error')
             end
         else
-            QBCore.Functions.Notify(Lang:t('error.no_melt'), "error")
+            QBCore.Functions.Notify(Lang:t('error.no_melt'), 'error')
         end
     end
 end)
 
 RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount, meltTimees)
-        if not isMelting then
-                isMelting = true
+    if not isMelting then
+        isMelting = true
         meltTime = meltTimees
         meltedItem = {}
-
-                CreateThread(function()
-                        while isMelting do
-                                if LocalPlayer.state.isLoggedIn then
-                                        meltTime = meltTime - 1
-                                        if meltTime <= 0 then
-                                                canTake = true
-                                                isMelting = false
-                        table.insert(meltedItem, {item = item, amount = meltingAmount})
+        CreateThread(function()
+            while isMelting do
+                if LocalPlayer.state.isLoggedIn then
+                    meltTime = meltTime - 1
+                    if meltTime <= 0 then
+                        canTake = true
+                        isMelting = false
+                        table.insert(meltedItem, { item = item, amount = meltingAmount })
                         if Config.SendMeltingEmail then
                             TriggerServerEvent('qb-phone:server:sendNewMail', {
                                 sender = Lang:t('info.title'),
@@ -322,18 +307,37 @@ RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount
                                 button = {}
                             })
                         else
-                            QBCore.Functions.Notify(Lang:t('info.message'), "success")
+                            QBCore.Functions.Notify(Lang:t('info.message'), 'success')
                         end
-                                        end
-                                else
-                                        break
-                                end
-                                Wait(1000)
-                        end
-                end)
-        end
+                    end
+                else
+                    break
+                end
+                Wait(1000)
+            end
+        end)
+    end
 end)
 
 RegisterNetEvent('qb-pawnshop:client:resetPickup', function()
     canTake = false
+end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        exports['qb-target']:RemoveZone('PawnShop')
+    end
+end)
+
+--Thread
+CreateThread(function()
+    local blip = AddBlipForCoord(Config.PawnLocation.coords.x, Config.PawnLocation.coords.y, Config.PawnLocation.coords.z)
+    SetBlipSprite(blip, 431)
+    SetBlipDisplay(blip, 4)
+    SetBlipScale(blip, 0.7)
+    SetBlipAsShortRange(blip, true)
+    SetBlipColour(blip, 5)
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentSubstringPlayerName(Lang:t('info.title'))
+    EndTextCommandSetBlipName(blip)
 end)

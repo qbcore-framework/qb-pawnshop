@@ -1,7 +1,9 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+
 local isMelting = false
 local canTake = false
 local meltTime
+local meltedItem = {}
 
 if Config.UseTarget then
     CreateThread(function()

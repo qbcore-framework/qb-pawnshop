@@ -22,7 +22,7 @@ end)
 if Config.UseTarget then
     CreateThread(function()
         for key, value in pairs(Config.PawnLocation) do
-            exports['qb-target']:AddBoxZone('PawnShop', value.coords, value.length, value.width, {
+            exports['qb-target']:AddBoxZone('PawnShop'..key, value.coords, value.length, value.width, {
                 name = 'PawnShop'..key,
                 heading = value.heading,
                 minZ = value.minZ,
@@ -50,7 +50,7 @@ else
                 minZ = value.minZ,
                 maxZ = value.maxZ,
             })
-            local pawnShopCombo = ComboZone:Create({ zone }, { name = 'pawnshopZone', debugPoly = value.debugPoly })
+            local pawnShopCombo = ComboZone:Create({ zone }, { name = 'PawnShop'..key, debugPoly = value.debugPoly })
             pawnShopCombo:onPlayerInOut(function(isPointInside)
                 if isPointInside then
                     exports['qb-menu']:showHeader({

@@ -21,10 +21,12 @@ RegisterNetEvent('qb-pawnshop:server:sellPawnItems', function(itemName, itemAmou
     local Player = QBCore.Functions.GetPlayer(src)
     local totalPrice = (tonumber(itemAmount) * itemPrice)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
+    local dist
     for _, value in pairs(Config.PawnLocation) do
         dist = #(playerCoords - value.coords)
         if #(playerCoords - value.coords) < 2 then
             dist = #(playerCoords - value.coords)
+            break
         end
     end
     if dist > 5 then exploitBan(src, 'sellPawnItems Exploiting') return end
@@ -59,10 +61,12 @@ RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
+    local dist
     for _, value in pairs(Config.PawnLocation) do
         dist = #(playerCoords - value.coords)
         if #(playerCoords - value.coords) < 2 then
             dist = #(playerCoords - value.coords)
+            break
         end
     end
     if dist > 5 then exploitBan(src, 'pickupMelted Exploiting') return end

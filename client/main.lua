@@ -19,57 +19,55 @@ CreateThread(function()
     end
 end)
 
-if Config.UseTarget then
-    CreateThread(function()
-        if Config.UseTarget then
-            for key, value in pairs(Config.PawnLocation) do
-                exports['qb-target']:AddBoxZone('PawnShop'..key, value.coords, value.length, value.width, {
-                    name = 'PawnShop'..key,
-                    heading = value.heading,
-                    minZ = value.minZ,
-                    maxZ = value.maxZ,
-                    debugPoly = value.debugPoly,
-                }, {
-                    options = {
-                        {
-                            type = 'client',
-                            event = 'qb-pawnshop:client:openMenu',
-                            icon = 'fas fa-ring',
-                            label = 'Pawn Shop',
-                        },
+CreateThread(function()
+    if Config.UseTarget then
+        for key, value in pairs(Config.PawnLocation) do
+            exports['qb-target']:AddBoxZone('PawnShop'..key, value.coords, value.length, value.width, {
+                name = 'PawnShop'..key,
+                heading = value.heading,
+                minZ = value.minZ,
+                maxZ = value.maxZ,
+                debugPoly = value.debugPoly,
+            }, {
+                options = {
+                    {
+                        type = 'client',
+                        event = 'qb-pawnshop:client:openMenu',
+                        icon = 'fas fa-ring',
+                        label = 'Pawn Shop',
                     },
-                    distance = value.distance
-                })
-            end
-        else
-            local zone = {}
-            for key, value in pairs(Config.PawnLocation) do
-                zone[#zone+1] = BoxZone:Create(value.coords, value.length, value.width, {
-                    name = 'PawnShop'..key,
-                    heading = value.heading,
-                    minZ = value.minZ,
-                    maxZ = value.maxZ,
-                })
-            end
-            local pawnShopCombo = ComboZone:Create({ zone }, { name = 'NewPawnShopCombo', debugPoly = false })
-            pawnShopCombo:onPlayerInOut(function(isPointInside)
-                if isPointInside then
-                    exports['qb-menu']:showHeader({
-                        {
-                            header = Lang:t('info.title'),
-                            txt = Lang:t('info.open_pawn'),
-                            params = {
-                                event = 'qb-pawnshop:client:openMenu'
-                            }
-                        }
-                    })
-                else
-                    exports['qb-menu']:closeMenu()
-                end
-            end)
+                },
+                distance = value.distance
+            })
         end
-    end)
-end
+    else
+        local zone = {}
+        for key, value in pairs(Config.PawnLocation) do
+            zone[#zone+1] = BoxZone:Create(value.coords, value.length, value.width, {
+                name = 'PawnShop'..key,
+                heading = value.heading,
+                minZ = value.minZ,
+                maxZ = value.maxZ,
+            })
+        end
+        local pawnShopCombo = ComboZone:Create({ zone }, { name = 'NewPawnShopCombo', debugPoly = false })
+        pawnShopCombo:onPlayerInOut(function(isPointInside)
+            if isPointInside then
+                exports['qb-menu']:showHeader({
+                    {
+                        header = Lang:t('info.title'),
+                        txt = Lang:t('info.open_pawn'),
+                        params = {
+                            event = 'qb-pawnshop:client:openMenu'
+                        }
+                    }
+                })
+            else
+                exports['qb-menu']:closeMenu()
+            end
+        end)
+    end
+end)
 
 RegisterNetEvent('qb-pawnshop:client:openMenu', function()
     if Config.UseTimes then

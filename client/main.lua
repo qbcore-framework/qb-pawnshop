@@ -6,46 +6,51 @@ local meltTime
 local meltedItem = {}
 
 CreateThread(function()
-    local blip = AddBlipForCoord(Config.PawnLocation.coords.x, Config.PawnLocation.coords.y, Config.PawnLocation.coords.z)
-    SetBlipSprite(blip, 431)
-    SetBlipDisplay(blip, 4)
-    SetBlipScale(blip, 0.7)
-    SetBlipAsShortRange(blip, true)
-    SetBlipColour(blip, 5)
-    BeginTextCommandSetBlipName('STRING')
-    AddTextComponentSubstringPlayerName(Lang:t('info.title'))
-    EndTextCommandSetBlipName(blip)
+    for _, value in pairs(Config.PawnLocation) do
+        local blip = AddBlipForCoord(value.coords.x, value.coords.y, value.coords.z)
+        SetBlipSprite(blip, 431)
+        SetBlipDisplay(blip, 4)
+        SetBlipScale(blip, 0.7)
+        SetBlipAsShortRange(blip, true)
+        SetBlipColour(blip, 5)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentSubstringPlayerName(Lang:t('info.title'))
+        EndTextCommandSetBlipName(blip)
+    end
 end)
 
-if Config.UseTarget then
-    CreateThread(function()
-        exports['qb-target']:AddBoxZone('PawnShop', Config.PawnLocation.coords, Config.PawnLocation.length, Config.PawnLocation.width, {
-            name = 'PawnShop',
-            heading = Config.PawnLocation.heading,
-            minZ = Config.PawnLocation.minZ,
-            maxZ = Config.PawnLocation.maxZ,
-            debugPoly = Config.PawnLocation.debugPoly,
-        }, {
-            options = {
-                {
-                    type = 'client',
-                    event = 'qb-pawnshop:client:openMenu',
-                    icon = 'fas fa-ring',
-                    label = 'Pawn Shop',
+CreateThread(function()
+    if Config.UseTarget then
+        for key, value in pairs(Config.PawnLocation) do
+            exports['qb-target']:AddBoxZone('PawnShop'..key, value.coords, value.length, value.width, {
+                name = 'PawnShop'..key,
+                heading = value.heading,
+                minZ = value.minZ,
+                maxZ = value.maxZ,
+                debugPoly = value.debugPoly,
+            }, {
+                options = {
+                    {
+                        type = 'client',
+                        event = 'qb-pawnshop:client:openMenu',
+                        icon = 'fas fa-ring',
+                        label = 'Pawn Shop',
+                    },
                 },
-            },
-            distance = Config.PawnLocation.distance
-        })
-    end)
-else
-    CreateThread(function()
-        local zone = BoxZone:Create(Config.PawnLocation.coords, Config.PawnLocation.length, Config.PawnLocation.width, {
-            name = 'box_zone',
-            heading = Config.PawnLocation.heading,
-            minZ = Config.PawnLocation.minZ,
-            maxZ = Config.PawnLocation.maxZ,
-        })
-        local pawnShopCombo = ComboZone:Create({ zone }, { name = 'pawnshopZone', debugPoly = Config.PawnLocation.debugPoly })
+                distance = value.distance
+            })
+        end
+    else
+        local zone = {}
+        for key, value in pairs(Config.PawnLocation) do
+            zone[#zone+1] = BoxZone:Create(value.coords, value.length, value.width, {
+                name = 'PawnShop'..key,
+                heading = value.heading,
+                minZ = value.minZ,
+                maxZ = value.maxZ,
+            })
+        end
+        local pawnShopCombo = ComboZone:Create( zone, { name = 'NewPawnShopCombo', debugPoly = false })
         pawnShopCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 exports['qb-menu']:showHeader({
@@ -61,8 +66,8 @@ else
                 exports['qb-menu']:closeMenu()
             end
         end)
-    end)
-end
+    end
+end)
 
 RegisterNetEvent('qb-pawnshop:client:openMenu', function()
     if Config.UseTimes then

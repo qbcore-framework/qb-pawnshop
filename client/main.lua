@@ -50,7 +50,7 @@ CreateThread(function()
                 maxZ = value.maxZ,
             })
         end
-        local pawnShopCombo = ComboZone:Create({ zone }, { name = 'NewPawnShopCombo', debugPoly = false })
+        local pawnShopCombo = ComboZone:Create( zone, { name = 'NewPawnShopCombo', debugPoly = false })
         pawnShopCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 exports['qb-menu']:showHeader({

@@ -10,7 +10,7 @@ shared_scripts {
 	'locales/en.lua',
 }
 
-server_script {
+server_scripts {
 	'@oxmysql/lib/MySQL.lua',
 	'server/main.lua'
 }

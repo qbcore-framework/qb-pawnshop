@@ -79,8 +79,6 @@ RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
                 TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received',{ value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label }), 'success')
             else
                 TriggerClientEvent('QBCore:Notify', src, 'Inventory Was too full to recieve all possible items. Try making sure your inventory isn\'t full next time. Items Lost: '..QBCore.Shared.Items[m.item].label, 'warning', 7500)
-                --TriggerClientEvent('qb-pawnshop:client:openMenu', src)
-                --return
             end
         end
     end

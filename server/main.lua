@@ -78,7 +78,7 @@ RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
                 TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
                 TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received',{ value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label }), 'success')
             else
-                TriggerClientEvent('QBCore:Notify', src, Lang:t('inventory_full', { value = QBCore.Shared.Items[m.item].label}), 'warning', 7500)
+                TriggerClientEvent('QBCore:Notify', src, Lang:t('error.inventory_full', { value = QBCore.Shared.Items[m.item].label}), 'warning', 7500)
             end
         end
     end

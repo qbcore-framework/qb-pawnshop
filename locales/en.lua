@@ -3,6 +3,7 @@ local Translations = {
         negative = 'Trying to sell a negative amount?',
         no_melt = 'You didn\'t give me anything to melt...',
         no_items = 'Not enough items',
+        inventory_full = 'Inventory too full to receive all possible items. Try making sure inventory isn\'t full next time. Items Lost: %{value}'
     },
     success = {
         sold = 'You have sold %{value} x %{value2} for $%{value3}',
@@ -28,7 +29,7 @@ local Translations = {
     }
 }
 
-Lang = Locale:new({
+Lang = Lang or Locale:new({
     phrases = Translations,
     warnOnMissing = true
 })

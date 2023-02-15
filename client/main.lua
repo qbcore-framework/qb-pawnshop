@@ -6,16 +6,18 @@ local meltTime
 local meltedItem = {}
 
 CreateThread(function()
-    for _, value in pairs(Config.PawnLocation) do
-        local blip = AddBlipForCoord(value.coords.x, value.coords.y, value.coords.z)
-        SetBlipSprite(blip, 431)
-        SetBlipDisplay(blip, 4)
-        SetBlipScale(blip, 0.7)
-        SetBlipAsShortRange(blip, true)
-        SetBlipColour(blip, 5)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentSubstringPlayerName(Lang:t('info.title'))
-        EndTextCommandSetBlipName(blip)
+    if Config.UseBlip then
+        for _, value in pairs(Config.PawnLocation) do
+            local blip = AddBlipForCoord(value.coords.x, value.coords.y, value.coords.z)
+            SetBlipSprite(blip, 431)
+            SetBlipDisplay(blip, 4)
+            SetBlipScale(blip, 0.7)
+            SetBlipAsShortRange(blip, true)
+            SetBlipColour(blip, 5)
+            BeginTextCommandSetBlipName('STRING')
+            AddTextComponentSubstringPlayerName(Lang:t('info.title'))
+            EndTextCommandSetBlipName(blip)
+        end
     end
 end)
 
@@ -283,7 +285,7 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
         if not meltingItem.amount then
             return
         end
-        if meltingItem.amount ~= nil then
+        if meltingItem.amount then
             if tonumber(meltingItem.amount) > 0 then
                 TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount, item)
 
@@ -304,7 +306,7 @@ RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount
         CreateThread(function()
             while isMelting do
                 if LocalPlayer.state.isLoggedIn then
-                    meltTime = meltTime - 1
+                    meltTime -= 1
                     if meltTime <= 0 then
                         canTake = true
                         isMelting = false

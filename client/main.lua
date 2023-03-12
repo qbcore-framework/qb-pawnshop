@@ -70,7 +70,7 @@ CreateThread(function()
             })
         end
         local pawnShopCombo = ComboZone:Create( zone, { name = 'NewPawnShopCombo', debugPoly = false })
-        pawnShopCombo:onPlayerInOut(function(isPointInside, _, zone)
+        pawnShopCombo:onPlayerInOut(function(isPointInside, _, zonedata)
             if isPointInside then
                 exports['qb-menu']:showHeader({
                     {
@@ -78,7 +78,7 @@ CreateThread(function()
                         txt = Lang:t('info.open_pawn'),
                         params = {
                             event = 'qb-pawnshop:client:openMenu',
-                            args = {shopitems = zone.data.shopitems, meltingenabled = zone.data.meltingenabled}
+                            args = {shopitems = zonedata.data.shopitems, meltingenabled = zonedata.data.meltingenabled}
                         },
                     }
                 })

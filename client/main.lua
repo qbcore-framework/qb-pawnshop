@@ -152,7 +152,8 @@ RegisterNetEvent('qb-pawnshop:client:openMenu', function(data)
                 params = {
                     event = 'qb-pawnshop:client:openPawn',
                     args = {
-                        items = shopitems
+                        items = shopitems,
+                        enablemelting = data.meltingenabled
                     }
                 }
             }
@@ -225,7 +226,7 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
         header = Lang:t('info.back'),
         params = {
             event = 'qb-pawnshop:client:openMenu',
-            args = {shopitems = shopitems}
+            args = {shopitems = shopitems, meltingenabled = data.enablemelting}
         }
     }
     exports['qb-menu']:openMenu(pawnMenu)

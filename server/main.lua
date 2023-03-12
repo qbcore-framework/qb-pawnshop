@@ -91,3 +91,15 @@ QBCore.Functions.CreateCallback('qb-pawnshop:server:getInv', function(source, cb
     local inventory = Player.PlayerData.items
     return cb(inventory)
 end)
+
+QBCore.Functions.CreateCallback('qb-pawnshop:server:ItemAmount', function(source, cb, item)
+    local Player = QBCore.Functions.GetPlayer(source)
+    local inventory = Player.PlayerData.items
+    local amount = 0
+    for _,v in pairs(inventory) do
+        if item == v.name then
+            amount = amount + v.amount
+        end
+    end
+    return cb(amount)
+end)

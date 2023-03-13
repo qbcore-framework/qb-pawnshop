@@ -1,6 +1,14 @@
 Config = {}
 
 Config.img = "qb-inventory/html/images/"
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
+Config.BankMoney = false -- Set to true if you want the money to go into the players bank
+Config.UseTimes = false -- Set to false if you want the pawnshop open 24/7
+Config.TimeOpen = 7 -- Opening Time
+Config.TimeClosed = 17 -- Closing Time
+Config.SendMeltingEmail = true -- send email when melting is ready ?
+Config.ShowNotOwnedItems = false -- true = Show all items that can be sold, false = Show only owned items
+
 Config.PawnLocation = {
     [1] = {
         coords = vector3(412.34, 314.81, 103.13),
@@ -11,6 +19,7 @@ Config.PawnLocation = {
         distance = 3.0,
         ped = 'a_f_y_soucent_01',
         enablemelting = false, -- is melting available at this location ?
+        showblip = true,
         items = {
             [1] = {
                 item = 'goldchain',
@@ -39,6 +48,7 @@ Config.PawnLocation = {
         distance = 3.0,
         ped = 'a_m_o_genstreet_01',
         enablemelting = true,
+        showblip = false,
         items = {
             [1] = {
                 item = 'tablet',
@@ -58,15 +68,7 @@ Config.PawnLocation = {
             }
         }
     },
-    }
-
-Config.BankMoney = false -- Set to true if you want the money to go into the players bank
-Config.UseTimes = false -- Set to false if you want the pawnshop open 24/7
-Config.TimeOpen = 7 -- Opening Time
-Config.TimeClosed = 17 -- Closing Time
-Config.SendMeltingEmail = true -- send email when melting is ready ?
-
-Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
+}
 
 Config.MeltingItems = { -- meltTime is amount of time in minutes per item
     [1] = {

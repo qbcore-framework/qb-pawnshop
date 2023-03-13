@@ -8,15 +8,17 @@ local ped = {}
 
 CreateThread(function()
     for _, value in pairs(Config.PawnLocation) do
-        local blip = AddBlipForCoord(value.coords.x, value.coords.y, value.coords.z)
-        SetBlipSprite(blip, 431)
-        SetBlipDisplay(blip, 4)
-        SetBlipScale(blip, 0.7)
-        SetBlipAsShortRange(blip, true)
-        SetBlipColour(blip, 5)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentSubstringPlayerName(Lang:t('info.title'))
-        EndTextCommandSetBlipName(blip)
+        if value.showblip then
+            local blip = AddBlipForCoord(value.coords.x, value.coords.y, value.coords.z)
+            SetBlipSprite(blip, 431)
+            SetBlipDisplay(blip, 4)
+            SetBlipScale(blip, 0.7)
+            SetBlipAsShortRange(blip, true)
+            SetBlipColour(blip, 5)
+            BeginTextCommandSetBlipName('STRING')
+            AddTextComponentSubstringPlayerName(Lang:t('info.title'))
+            EndTextCommandSetBlipName(blip)
+        end
     end
 end)
 
@@ -214,11 +216,13 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
                 }
             }
         else
-            pawnMenu[#pawnMenu + 1] = {
-                header = QBCore.Shared.Items[v.item].label,
-                txt = Lang:t('info.sell_items', { value = v.price }),
-                disabled = true,
-            }
+            if Config.ShowNotOwnedItems then
+                pawnMenu[#pawnMenu + 1] = {
+                    header = QBCore.Shared.Items[v.item].label,
+                    txt = Lang:t('info.sell_items', { value = v.price }),
+                    disabled = true,
+                }
+            end
         end
     end
 
@@ -272,10 +276,10 @@ RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
     end)
 end)
 
-RegisterNetEvent('qb-pawnshop:client:pawnitems', function(item)
+RegisterNetEvent('qb-pawnshop:client:pawnitems', function(data)
     QBCore.Functions.TriggerCallback('qb-pawnshop:server:ItemAmount', function(amount)
         local sellingItem = exports['qb-input']:ShowInput({
-            header = "<center><p><img src=nui://"..Config.img..QBCore.Shared.Items[item.name].image.." width=100px></p>"..QBCore.Shared.Items[item.name].label,
+            header = "<center><p><img src=nui://"..Config.img..QBCore.Shared.Items[data.name].image.." width=100px></p>"..QBCore.Shared.Items[data.name].label,
             submitText = Lang:t('info.sell'),
             inputs = {
                 {
@@ -292,12 +296,12 @@ RegisterNetEvent('qb-pawnshop:client:pawnitems', function(item)
             end
 
             if tonumber(sellingItem.amount) > 0 then
-                TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+                TriggerServerEvent('qb-pawnshop:server:sellPawnItems', data.name, sellingItem.amount, data.price)
             else
                 QBCore.Functions.Notify(Lang:t('error.negative'), 'error')
             end
         end
-    end, item.name)
+    end, data.name)
 end)
 
 RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)

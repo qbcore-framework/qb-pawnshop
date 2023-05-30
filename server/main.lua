@@ -30,6 +30,14 @@ RegisterNetEvent('qb-pawnshop:server:sellPawnItems', function(itemName, itemAmou
         end
     end
     if dist > 5 then exploitBan(src, 'sellPawnItems Exploiting') return end
+
+    --## Check if item is sellable even at a pawnShop
+    for k,v in pairs(Config.PawnItems) do 
+        if v.item == itemName then 
+          found = true
+        end
+    end
+    if not found then exploitBan(src, 'sellPawnItems Exploiting') return false; end 
     if Player.Functions.RemoveItem(itemName, tonumber(itemAmount)) then
         if Config.BankMoney then
             Player.Functions.AddMoney('bank', totalPrice)

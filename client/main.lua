@@ -258,13 +258,18 @@ RegisterNetEvent('qb-pawnshop:client:pawnitems', function(item)
             return
         end
 
-        if tonumber(sellingItem.amount) > 0 then
-            TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+        if tonumber(sellingItem.amount) > 0 then 
+            if tonumber(sellingItem.amount) <= item.amount then
+                TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+            else
+                QBCore.Functions.Notify(Lang:t('error.no_items'), 'error')
+            end
         else
             QBCore.Functions.Notify(Lang:t('error.negative'), 'error')
         end
     end
 end)
+
 
 RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
     local meltingItem = exports['qb-input']:ShowInput({

@@ -258,7 +258,7 @@ RegisterNetEvent('qb-pawnshop:client:pawnitems', function(item)
             return
         end
 
-        if tonumber(sellingItem.amount) > 0 then 
+        if tonumber(sellingItem.amount) > 0 then
             if tonumber(sellingItem.amount) <= item.amount then
                 TriggerServerEvent('qb-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
             else

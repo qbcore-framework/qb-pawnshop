@@ -29,14 +29,17 @@ RegisterNetEvent('qb-pawnshop:server:sellPawnItems', function(itemName, itemAmou
             break
         end
     end
-    if dist > 5 then exploitBan(src, 'sellPawnItems Exploiting') return end
+    if dist > 5 then
+        exploitBan(src, 'sellPawnItems Exploiting')
+        return
+    end
     if Player.Functions.RemoveItem(itemName, tonumber(itemAmount)) then
         if Config.BankMoney then
-            Player.Functions.AddMoney('bank', totalPrice)
+            Player.Functions.AddMoney('bank', totalPrice, 'pawnshop sell')
         else
-            Player.Functions.AddMoney('cash', totalPrice)
+            Player.Functions.AddMoney('cash', totalPrice, 'pawnshop sell')
         end
-        TriggerClientEvent('QBCore:Notify', src, Lang:t('success.sold', { value = tonumber(itemAmount), value2 = QBCore.Shared.Items[itemName].label, value3 = totalPrice }),'success')
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('success.sold', { value = tonumber(itemAmount), value2 = QBCore.Shared.Items[itemName].label, value3 = totalPrice }), 'success')
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.no_items'), 'error')
@@ -69,16 +72,19 @@ RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
             break
         end
     end
-    if dist > 5 then exploitBan(src, 'pickupMelted Exploiting') return end
+    if dist > 5 then
+        exploitBan(src, 'pickupMelted Exploiting')
+        return
+    end
     for _, v in pairs(item.items) do
         local meltedAmount = v.amount
         for _, m in pairs(v.item.reward) do
             local rewardAmount = m.amount
             if Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount)) then
                 TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
-                TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received',{ value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label }), 'success')
+                TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', { value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label }), 'success')
             else
-                TriggerClientEvent('QBCore:Notify', src, Lang:t('error.inventory_full', { value = QBCore.Shared.Items[m.item].label}), 'warning', 7500)
+                TriggerClientEvent('QBCore:Notify', src, Lang:t('error.inventory_full', { value = QBCore.Shared.Items[m.item].label }), 'warning', 7500)
             end
         end
     end

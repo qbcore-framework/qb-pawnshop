@@ -83,12 +83,12 @@ RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
             if Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount)) then
                 TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
                 TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', { value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label }), 'success')
+                TriggerClientEvent('qb-pawnshop:client:resetPickup', src)
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t('error.inventory_full', { value = QBCore.Shared.Items[m.item].label }), 'warning', 7500)
             end
         end
     end
-    TriggerClientEvent('qb-pawnshop:client:resetPickup', src)
     TriggerClientEvent('qb-pawnshop:client:openMenu', src)
 end)
 

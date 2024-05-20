@@ -33,14 +33,14 @@ RegisterNetEvent('qb-pawnshop:server:sellPawnItems', function(itemName, itemAmou
         exploitBan(src, 'sellPawnItems Exploiting')
         return
     end
-    if Player.Functions.RemoveItem(itemName, tonumber(itemAmount)) then
+    if exports['qb-inventory']:RemoveItem(src, itemName, tonumber(itemAmount), false, 'qb-pawnshop:server:sellPawnItems') then
         if Config.BankMoney then
-            Player.Functions.AddMoney('bank', totalPrice, 'pawnshop sell')
+            Player.Functions.AddMoney('bank', totalPrice, 'qb-pawnshop:server:sellPawnItems')
         else
-            Player.Functions.AddMoney('cash', totalPrice, 'pawnshop sell')
+            Player.Functions.AddMoney('cash', totalPrice, 'qb-pawnshop:server:sellPawnItems')
         end
         TriggerClientEvent('QBCore:Notify', src, Lang:t('success.sold', { value = tonumber(itemAmount), value2 = QBCore.Shared.Items[itemName].label, value3 = totalPrice }), 'success')
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.no_items'), 'error')
     end
@@ -50,8 +50,8 @@ end)
 RegisterNetEvent('qb-pawnshop:server:meltItemRemove', function(itemName, itemAmount, item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    if Player.Functions.RemoveItem(itemName, itemAmount) then
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
+    if exports['qb-inventory']:RemoveItem(src, itemName, itemAmount, false, 'qb-pawnshop:server:meltItemRemove') then
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
         local meltTime = (tonumber(itemAmount) * item.time)
         TriggerClientEvent('qb-pawnshop:client:startMelting', src, item, tonumber(itemAmount), (meltTime * 60000 / 1000))
         TriggerClientEvent('QBCore:Notify', src, Lang:t('info.melt_wait', { value = meltTime }), 'primary')
@@ -80,8 +80,8 @@ RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
         local meltedAmount = v.amount
         for _, m in pairs(v.item.reward) do
             local rewardAmount = m.amount
-            if Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount)) then
-                TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
+            if exports['qb-inventory']:AddItem(src, m.item, (meltedAmount * rewardAmount), false, false, 'qb-pawnshop:server:pickupMelted') then
+                TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[m.item], 'add')
                 TriggerClientEvent('QBCore:Notify', src, Lang:t('success.items_received', { value = (meltedAmount * rewardAmount), value2 = QBCore.Shared.Items[m.item].label }), 'success')
                 TriggerClientEvent('qb-pawnshop:client:resetPickup', src)
             else

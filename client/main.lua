@@ -172,25 +172,47 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
                 isMenuHeader = true,
             }
         }
-        for _, v in pairs(PlyInv) do
-            for i = 1, #data.items do
-                if v.name == data.items[i].item then
-                    pawnMenu[#pawnMenu + 1] = {
-                        header = QBCore.Shared.Items[v.name].label,
-                        txt = Lang:t('info.sell_items', { value = data.items[i].price }),
-                        params = {
-                            event = 'qb-pawnshop:client:pawnitems',
-                            args = {
-                                label = QBCore.Shared.Items[v.name].label,
-                                price = data.items[i].price,
-                                name = v.name,
-                                amount = v.amount
+            local sellableItems = {}
+            local totalAmount = 0
+            for _, v in pairs(PlyInv) do
+                for i = 1, #data.items do
+                    if v.name == data.items[i].item then
+                        pawnMenu[#pawnMenu + 1] = {
+                            header = QBCore.Shared.Items[v.name].label,
+                            txt = Lang:t('info.sell_items', { value = data.items[i].price }),
+                            params = {
+                                event = 'qb-pawnshop:client:pawnitems',
+                                args = {
+                                    label = QBCore.Shared.Items[v.name].label,
+                                    price = data.items[i].price,
+                                    name = v.name,
+                                    amount = v.amount
+                                }
                             }
                         }
-                    }
+                        sellableItems[#sellableItems+1] = {
+                            name = v.name,
+                            amount = v.amount,
+                            price = data.items[i].price,
+                            slot = v.slot
+                        }
+                        totalAmount = totalAmount + (v.amount * data.items[i].price)
+                    end
                 end
             end
-        end
+            if #sellableItems > 0 then
+                pawnMenu[#pawnMenu + 1] = {
+                    header = 'Sell All',
+                    txt = 'Sell all pawnable items for $' .. totalAmount,
+                    params = {
+                        event = 'qb-pawnshop:client:sellAllPawnItems',
+                        args = {
+                            items = sellableItems,
+                            total = totalAmount
+                        }
+                    }
+                }
+            end
         pawnMenu[#pawnMenu + 1] = {
             header = Lang:t('info.back'),
             params = {
@@ -270,6 +292,14 @@ RegisterNetEvent('qb-pawnshop:client:pawnitems', function(item)
     end
 end)
 
+    RegisterNetEvent('qb-pawnshop:client:sellAllPawnItems', function(data)
+        if data and data.items and #data.items > 0 then
+            TriggerServerEvent('qb-pawnshop:server:sellAllPawnItems', data.items, data.total)
+            QBCore.Functions.Notify('You sold all pawnable items for $' .. data.total, 'success')
+        else
+            QBCore.Functions.Notify('No items to sell.', 'error')
+        end
+    end)
 
 RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
     local meltingItem = exports['qb-input']:ShowInput({

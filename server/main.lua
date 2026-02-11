@@ -49,7 +49,6 @@ end)
 
 RegisterNetEvent('qb-pawnshop:server:meltItemRemove', function(itemName, itemAmount, item)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
     if exports['qb-inventory']:RemoveItem(src, itemName, itemAmount, false, 'qb-pawnshop:server:meltItemRemove') then
         TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[itemName], 'remove')
         local meltTime = (tonumber(itemAmount) * item.time)
@@ -62,7 +61,6 @@ end)
 
 RegisterNetEvent('qb-pawnshop:server:pickupMelted', function(item)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
     local dist
     for _, value in pairs(Config.PawnLocation) do
@@ -96,4 +94,46 @@ QBCore.Functions.CreateCallback('qb-pawnshop:server:getInv', function(source, cb
     local Player = QBCore.Functions.GetPlayer(source)
     local inventory = Player.PlayerData.items
     return cb(inventory)
+end)
+
+RegisterNetEvent('qb-pawnshop:server:sellAllPawnItems', function(items, total)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local playerCoords = GetEntityCoords(GetPlayerPed(src))
+    local dist
+    for _, value in pairs(Config.PawnLocation) do
+        dist = #(playerCoords - value.coords)
+        if #(playerCoords - value.coords) < 2 then
+            dist = #(playerCoords - value.coords)
+            break
+        end
+    end
+    if dist > 5 then
+        exploitBan(src, 'sellAllPawnItems Exploiting')
+        return
+    end
+    local removedCount = 0
+    for _, item in pairs(items) do
+        local removed
+        if item.slot then
+            removed = exports['qb-inventory']:RemoveItem(src, item.name, item.amount, item.slot, 'qb-pawnshop:server:sellAllPawnItems')
+        else
+            removed = exports['qb-inventory']:RemoveItem(src, item.name, item.amount, false, 'qb-pawnshop:server:sellAllPawnItems')
+        end
+        if removed then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[item.name], 'remove')
+            removedCount = removedCount + 1
+        end
+    end
+    if removedCount > 0 then
+        if Config.BankMoney then
+            Player.Functions.AddMoney('bank', total, 'qb-pawnshop:server:sellAllPawnItems')
+        else
+            Player.Functions.AddMoney('cash', total, 'qb-pawnshop:server:sellAllPawnItems')
+        end
+        TriggerClientEvent('QBCore:Notify', src, 'You received $' .. total .. ' for all pawnable items.', 'success')
+    else
+        TriggerClientEvent('QBCore:Notify', src, 'No items could be sold.', 'error')
+    end
+    TriggerClientEvent('qb-pawnshop:client:openMenu', src)
 end)

@@ -1,4 +1,5 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
+local sharedItems = exports['qb-core']:GetShared('Items')
 
 local isMelting = false
 local canTake = false
@@ -22,8 +23,8 @@ end)
 CreateThread(function()
     if Config.UseTarget then
         for key, value in pairs(Config.PawnLocation) do
-            exports['qb-target']:AddBoxZone('PawnShop'..key, value.coords, value.length, value.width, {
-                name = 'PawnShop'..key,
+            exports['qb-target']:AddBoxZone('PawnShop' .. key, value.coords, value.length, value.width, {
+                name = 'PawnShop' .. key,
                 heading = value.heading,
                 minZ = value.minZ,
                 maxZ = value.maxZ,
@@ -43,14 +44,14 @@ CreateThread(function()
     else
         local zone = {}
         for key, value in pairs(Config.PawnLocation) do
-            zone[#zone+1] = BoxZone:Create(value.coords, value.length, value.width, {
-                name = 'PawnShop'..key,
+            zone[#zone + 1] = BoxZone:Create(value.coords, value.length, value.width, {
+                name = 'PawnShop' .. key,
                 heading = value.heading,
                 minZ = value.minZ,
                 maxZ = value.maxZ,
             })
         end
-        local pawnShopCombo = ComboZone:Create( zone, { name = 'NewPawnShopCombo', debugPoly = false })
+        local pawnShopCombo = ComboZone:Create(zone, { name = 'NewPawnShopCombo', debugPoly = false })
         pawnShopCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 exports['qb-menu']:showHeader({
@@ -176,12 +177,12 @@ RegisterNetEvent('qb-pawnshop:client:openPawn', function(data)
             for i = 1, #data.items do
                 if v.name == data.items[i].item then
                     pawnMenu[#pawnMenu + 1] = {
-                        header = QBCore.Shared.Items[v.name].label,
+                        header = sharedItems[v.name].label,
                         txt = Lang:t('info.sell_items', { value = data.items[i].price }),
                         params = {
                             event = 'qb-pawnshop:client:pawnitems',
                             args = {
-                                label = QBCore.Shared.Items[v.name].label,
+                                label = sharedItems[v.name].label,
                                 price = data.items[i].price,
                                 name = v.name,
                                 amount = v.amount
@@ -214,12 +215,12 @@ RegisterNetEvent('qb-pawnshop:client:openMelt', function(data)
             for i = 1, #data.items do
                 if v.name == data.items[i].item then
                     meltMenu[#meltMenu + 1] = {
-                        header = QBCore.Shared.Items[v.name].label,
-                        txt = Lang:t('info.melt_item', { value = QBCore.Shared.Items[v.name].label }),
+                        header = sharedItems[v.name].label,
+                        txt = Lang:t('info.melt_item', { value = sharedItems[v.name].label }),
                         params = {
                             event = 'qb-pawnshop:client:meltItems',
                             args = {
-                                label = QBCore.Shared.Items[v.name].label,
+                                label = sharedItems[v.name].label,
                                 reward = data.items[i].rewards,
                                 name = v.name,
                                 amount = v.amount,
@@ -291,7 +292,6 @@ RegisterNetEvent('qb-pawnshop:client:meltItems', function(item)
         if meltingItem.amount ~= nil then
             if tonumber(meltingItem.amount) > 0 then
                 TriggerServerEvent('qb-pawnshop:server:meltItemRemove', item.name, meltingItem.amount, item)
-
             else
                 QBCore.Functions.Notify(Lang:t('error.no_melt'), 'error')
             end
@@ -313,7 +313,7 @@ RegisterNetEvent('qb-pawnshop:client:startMelting', function(item, meltingAmount
                     if meltTime <= 0 then
                         canTake = true
                         isMelting = false
-                        meltedItem[#meltedItem+1] = { item = item, amount = meltingAmount }
+                        meltedItem[#meltedItem + 1] = { item = item, amount = meltingAmount }
                         if Config.SendMeltingEmail then
                             TriggerServerEvent('qb-phone:server:sendNewMail', {
                                 sender = Lang:t('info.title'),
